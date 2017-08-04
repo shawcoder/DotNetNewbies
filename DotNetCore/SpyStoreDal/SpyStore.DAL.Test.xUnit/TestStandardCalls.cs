@@ -6,12 +6,16 @@ namespace SpyStoreDal.SpyStore.DAL.Test.xUnit
 	using EF;
 	using FluentAssertions;
 	using Microsoft.EntityFrameworkCore;
+	using Microsoft.EntityFrameworkCore.Storage;
 	using Models.Entities;
 	using Xunit;
 
 	[Collection("SpyStore.DAL")]
 	public class TestStandardCalls : IDisposable
 	{
+		private const string _FOO = "Foo";
+		private const string _BAR = "Bar";
+
 		private readonly StoreContext _Db;
 
 		private void CleanDatabase()
@@ -69,7 +73,7 @@ namespace SpyStoreDal.SpyStore.DAL.Test.xUnit
 			Category vCategory =
 				new Category
 				{
-					CategoryName = "Foo"
+					CategoryName = _FOO
 				};
 
 			// Act
@@ -94,10 +98,8 @@ namespace SpyStoreDal.SpyStore.DAL.Test.xUnit
 		public void TestFetchAllCategories()
 		{
 			// Arrange
-			const string FOO = "Foo";
-			const string BAR = "Bar";
-			_Db.Categories.Add(new Category { CategoryName = FOO });
-			_Db.Categories.Add(new Category { CategoryName = BAR });
+			_Db.Categories.Add(new Category { CategoryName = _FOO });
+			_Db.Categories.Add(new Category { CategoryName = _BAR });
 			_Db.SaveChanges();
 
 			// Act
@@ -106,25 +108,22 @@ namespace SpyStoreDal.SpyStore.DAL.Test.xUnit
 
 			// Assert
 			vCategories.Count.Should().Be(2);
-			vCategories[0].CategoryName.Should().Be(BAR);
-			vCategories[1].CategoryName.Should().Be(FOO);
+			vCategories[0].CategoryName.Should().Be(_BAR);
+			vCategories[1].CategoryName.Should().Be(_FOO);
 		}
 
 		[Fact]
 		public void TestUpdateACategory()
 		{
 			// Arrange
-			const string FOO = "Foo";
-			const string BAR = "Bar";
-
 			Category vCategory =
 				new Category
 				{
-					CategoryName = FOO
+					CategoryName = _FOO
 				};
 			_Db.Categories.Add(vCategory);
 			_Db.SaveChanges();
-			vCategory.CategoryName = BAR;
+			vCategory.CategoryName = _BAR;
 
 			// Act
 			_Db.Update(vCategory);
@@ -149,7 +148,115 @@ namespace SpyStoreDal.SpyStore.DAL.Test.xUnit
 			}
 
 			// Assert
-			vExpected.Should().Be(BAR);
+			vExpected.Should().Be(_BAR);
+		}
+
+		[Fact]
+		public void TestShouldNotUpdateANonAttachedCategory()
+		{
+			// Arrange
+			Category vCategory =
+				new Category
+				{
+					CategoryName = _FOO
+				};
+			_Db.Categories.Add(vCategory);
+			vCategory.CategoryName = _BAR;
+
+			// Act
+			Action vResult = () => _Db.Categories.Update(vCategory);
+
+			// Assert
+			vResult.ShouldThrow<InvalidOperationException>();
+		}
+
+		[Fact]
+		public void TestShouldDeleteACategoryWithTimestampData()
+		{
+			// Arrange
+			Category vCategory =
+				new Category
+				{
+					CategoryName = _FOO
+				};
+			_Db.Categories.Add(vCategory);
+			_Db.SaveChanges();
+			StoreContext vContext = new StoreContext();
+			Category vCategoryToDelete =
+				new Category
+				{
+					Id = vCategory.Id
+					, TimeStamp = vCategory.TimeStamp
+				};
+			vContext.Entry(vCategoryToDelete).State = EntityState.Deleted;
+
+			// Act
+			int vResult = vContext.SaveChanges();
+
+			// Assert
+			vResult.Should().Be(1);
+		}
+
+		[Fact]
+		public void TestShouldNotDeleteACategoryWithoutTimestapData()
+		{
+			// Arrange
+			Category vCategory =
+				new Category
+				{
+					CategoryName = _FOO
+				};
+			_Db.Categories.Add(vCategory);
+			_Db.SaveChanges();
+			StoreContext vContext = new StoreContext();
+			Category vCategoryToDelete =
+				new Category
+				{
+					Id = vCategory.Id
+				};
+			vContext.Categories.Remove(vCategoryToDelete);
+
+			// Act
+			RetryLimitExceededException vResult =
+				Assert.Throws<RetryLimitExceededException>
+					(() => vContext.SaveChanges());
+			DbUpdateConcurrencyException vInnerException =
+				vResult.InnerException as DbUpdateConcurrencyException;
+
+			// Assert
+			vInnerException?.Entries.Count.Should().Be(1);
+			((Category)vInnerException?.Entries[0].Entity)?.Id.Should().Be(vCategory.Id);
+		}
+
+		[Fact]
+		public void TestShouldDeleteACategory()
+		{
+			// Arrange
+			Category vCategory =
+				new Category
+				{
+					CategoryName = _FOO
+				};
+
+			// Act
+			_Db.Categories.Add(vCategory);
+			_Db.SaveChanges();
+
+			// Assert
+			_Db.Categories.Count().Should().Be(1);
+
+			// Act
+			_Db.Categories.Remove(vCategory);
+
+			// Assert
+			_Db.Entry(vCategory).State.Should().Be(EntityState.Deleted);
+
+			// Act
+			_Db.SaveChanges();
+
+			// Assert
+			_Db.Entry(vCategory).State.Should().Be(EntityState.Detached);
+			_Db.Categories.Count().Should().Be(0);
 		}
 
 		public void Dispose()
