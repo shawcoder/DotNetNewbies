@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpyStore.DAL.EF", "SpyStore.DAL.EF\SpyStore.DAL.EF.csproj", "{314C44D7-8681-4259-BFC0-3996F9B2927E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpyStore.DAL.Dapper", "SpyStore.DAL.Dapper\SpyStore.DAL.Dapper.csproj", "{94FDF00C-B316-4981-8358-B4F2707F796A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpyStore.DAL.StandardCalls", "SpyStore.DAL.StandardCalls\SpyStore.DAL.StandardCalls.csproj", "{9038C7C2-FF9F-4469-B41B-08EC34516478}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpyStore.DAL.Contracts", "SpyStore.DAL.Contracts\SpyStore.DAL.Contracts.csproj", "{FDD01A9C-1E56-430F-8120-FA160776094F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpyStore.DAL.Test", "SpyStore.DAL.Test\SpyStore.DAL.Test.csproj", "{651F9B74-05BC-4E05-A973-5BC366EAB28F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpyStore.DAL.Models", "SpyStore.DAL.Models\SpyStore.DAL.Models.csproj", "{CF4E6E53-443D-4775-9F7A-BBBDC6D5BFC3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{314C44D7-8681-4259-BFC0-3996F9B2927E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{314C44D7-8681-4259-BFC0-3996F9B2927E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{314C44D7-8681-4259-BFC0-3996F9B2927E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{314C44D7-8681-4259-BFC0-3996F9B2927E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94FDF00C-B316-4981-8358-B4F2707F796A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94FDF00C-B316-4981-8358-B4F2707F796A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94FDF00C-B316-4981-8358-B4F2707F796A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94FDF00C-B316-4981-8358-B4F2707F796A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9038C7C2-FF9F-4469-B41B-08EC34516478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9038C7C2-FF9F-4469-B41B-08EC34516478}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9038C7C2-FF9F-4469-B41B-08EC34516478}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9038C7C2-FF9F-4469-B41B-08EC34516478}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDD01A9C-1E56-430F-8120-FA160776094F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDD01A9C-1E56-430F-8120-FA160776094F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDD01A9C-1E56-430F-8120-FA160776094F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDD01A9C-1E56-430F-8120-FA160776094F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{651F9B74-05BC-4E05-A973-5BC366EAB28F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{651F9B74-05BC-4E05-A973-5BC366EAB28F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{651F9B74-05BC-4E05-A973-5BC366EAB28F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{651F9B74-05BC-4E05-A973-5BC366EAB28F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF4E6E53-443D-4775-9F7A-BBBDC6D5BFC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF4E6E53-443D-4775-9F7A-BBBDC6D5BFC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF4E6E53-443D-4775-9F7A-BBBDC6D5BFC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF4E6E53-443D-4775-9F7A-BBBDC6D5BFC3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

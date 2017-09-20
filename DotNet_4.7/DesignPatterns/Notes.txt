@@ -1,0 +1,107 @@
+Notes for DesignPatterns
+
+The first set of patterns are the "Creation" patterns:
+1. AbstractFactory
+2. Builder
+3. FactoryMethod
+4. Prototype
+5. Singleton
+
+The characteritics of each are as follows:
+- The AbstractFactory is used to create families of related or dependent 
+	objects WITHOUT specifying their concrete classes.
+	It starts with having a common interface for each desired object within the
+	factory. Following the interface is the declaration of an abstract class which
+	will either implement some portion of the object that is common to all
+	variants, or declare the method signatures for virtual classes that implement
+	the interface. The AbstractFactory class that is implemented is still an
+	abstract class in C# terms, but it is also the collection point for all of the
+	various interfaces of the components (the individual objects) that comprise
+	the desired object (in the case of this demo, a vehicle of some sort which is
+	made up of items like a chassis, a body, glass, etc.). 
+	It is presumed that all descendents of the AbstractFactory are related e.g. a
+	vehicle can be a car, a van, etc. therefore, each type of desired object
+	must descend from the AbstractFactory class, in this case, the 
+	AbstractVehicleFactory. The AbstractVehicleFactory contains methods for 
+	creating instances of each of the desired pieces of the resultant object e.g.
+	a body, glassware, etc. Each resultant object class must override all declared
+	public methods in order to satisfy the AbstractVehicleFactory.
+	The downside to this pattern is that if an additional internal piece is added,
+	ALL descendents must implement it. An example of where this can get you into
+	trouble would be the inclusion of "doors" as a requirement, then needing to 
+	make a motorcycle.
+
+- The Builder pattern separates the construction of a complex object from its
+	representation so that the same construction process can create different
+	representations.
+	For instance, a van needs a cab area and a large reinforced storage area,
+	whereas a car needs a passenger area and a trunk (boot). So, the Builder
+	pattern breaks the construction of the complex object into separate methods
+	and then uses a "Director" method to specify the required steps in the correct
+	order to build the resultant final object.
+	Again, all methods must be implemented, even if they are just empty to satisfy
+	the abstract parent class since it needs to know all steps to create all
+	variants.
+
+- The FactoryMethod pattern defines an interface for creating an object but 
+	allows subclasses to decide which class to instantiate. Each descendent
+	factory class will override this "Build" method and handle all cases 
+	appropriate to the factory e.g. a CarFactory will build saloons and coupes,
+	a VanFactory will build BoxVans and Pickups, both will do so by calling the
+	"Build" method as defined in the abstract class.
+	The downside is that each Build method must know the concrete classes of the
+	variants so modifications are required in the source to add new variants.
+	You can use a static method in the factory to perform the variant selection
+	and include a "Make" function to handle the details.
+
+- The Prototype pattern (which is used by JavaScript) uses a factory of sorts to
+	create an instance of all variants at instantiation time. When an instance of
+	a particular class is required, which may take a long time to spin up, rather
+	than create a new instance from scratch, the prototype is simply cloned and
+	the clone returned as the result. Note that the caller will get an instance as
+	defined by the factory, so all modifiable properties should be declared as 
+	such.
+	Downsides to this pattern are that it creates an instance of EVERY variant at
+	start up. This may take a great deal of time and/or consume a vast amount of
+	memory. A "lazy" variant may be used such that the instance needed may be
+	created the first time it is requested and then that instance cloned 
+	thereafter but the same issues still apply, just to a lesser degreer.
+
+- The Singleton pattern is used to guarantee that only a single instance of the
+	class is ever made and that all references to it refer to that one instance.
+	The instance will be created the first time the instance is referenced, 
+	thereafter that instance is used.
+
+	The next set of patterns are the Structural patterns:
+	1. Adapter
+	2. Bridge
+	3. Composite
+	4. Decorator
+	5. Facade
+	6. Flyweight
+	7. Proxy
+
+	- The Adapter pattern is used to represent one or more objects in the guise of
+		a different object (very much like using a two prong adapter to fit a three
+		prong electric plug). In short the adapter converts the interface of one
+		class into the interface of another class.
+
+	Next are the Behaviorial patterns:
+	1. Chain of responsibility
+	2. Command
+	3. Interpreter
+	4. Iterator
+	5. Mediator
+	6. Memento
+	7. Observer
+	8. State
+	9. Strategy
+	10. Template
+	11. Visitor
+
+	Other useful patterns:
+	1. Null Object
+	2. Simple Factory
+	3. MVC (Model View Controller)
+	4. Layers
+	5. Repository

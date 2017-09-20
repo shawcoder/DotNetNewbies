@@ -1,0 +1,20 @@
+﻿@model Web.Models.IndexViewDTO
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>Index</title>
+</head>
+<body>
+<div>
+	Product Total: $@Model.FullPrice
+</div>
+<div>
+	Discounted Total: $@Model.DiscountedPrice
+</div>
+</body>
+</html>
