@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <AssemblyName>SpyStoreDal.SpyStore.DAL.EF.Repository</AssemblyName>
+    <RootNamespace>SpyStoreDal.SpyStore.DAL.EF.Repository</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SpyStore.Contracts\SpyStore.Contracts.csproj" />
+    <ProjectReference Include="..\SpyStore.DAL\SpyStore.DAL.csproj" />
+    <ProjectReference Include="..\SpyStore.Models\SpyStore.Models.csproj" />
+  </ItemGroup>
+
+</Project>

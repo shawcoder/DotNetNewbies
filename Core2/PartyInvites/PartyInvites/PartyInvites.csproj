@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Description>Main project for PartyInvites web site.</Description>
+    <Version>1.0.0.1</Version>
+    <Authors>Authored by: Az Web Engineering</Authors>
+    <Company>Company is Az Web Engineering</Company>
+    <Product>Product is PropertyInvites</Product>
+    <Copyright>Copyright © Az Web Engineering</Copyright>
+    <PackageLicenseUrl>No License Url</PackageLicenseUrl>
+    <PackageProjectUrl>No Project Url</PackageProjectUrl>
+    <PackageIconUrl>No Icon Url</PackageIconUrl>
+    <RepositoryUrl>No Repository Url</RepositoryUrl>
+    <RepositoryType>No Repository Type</RepositoryType>
+    <PackageTags>No Tags</PackageTags>
+    <PackageReleaseNotes>No Release Notes (yet)</PackageReleaseNotes>
+    <AssemblyVersion>1.0.0.02</AssemblyVersion>
+    <FileVersion>1.0.0.03</FileVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
+  </ItemGroup>
+
+</Project>

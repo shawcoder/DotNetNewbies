@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <AssemblyName>SpyStoreDal.SpyStore.Contracts</AssemblyName>
+    <RootNamespace>SpyStoreDal.SpyStore.Contracts</RootNamespace>
+  </PropertyGroup>
+
+</Project>
