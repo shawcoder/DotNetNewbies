@@ -128,16 +128,13 @@
 
 		#region Examle 3 - parameter passing and processing
 
-		/// <summary>
-		/// Here we are declaring a lambda that takes in two values, adds them and
-		/// then returns the result. Notice that there are no type declarations
-		/// associated with the declaration, the compiler is clever enough to just
-		/// figure it out from the declaration of the lambda expression variable
-		/// (the Func<int, int, int> vLambda portion)
-		/// </summary>
+		// Here we are declaring a lambda that takes in two values, adds them and
+		// then returns the result. Notice that there are no type declarations
+		// associated with the declaration, the compiler is clever enough to just
+		// figure it out from the declaration of the lambda expression variable
+		// (the Func<int, int, int> vLambda portion)
 		/// <param name="aFirstNumber"></param>
 		/// <param name="aSecondNUmber"></param>
-		/// <returns></returns>
 		public int Example3LambdaWithParameters(int aFirstNumber, int aSecondNUmber)
 		{
 			Func<int, int, int> vLambda = (a, b) => a + b;
