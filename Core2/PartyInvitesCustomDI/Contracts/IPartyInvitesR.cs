@@ -1,5 +1,6 @@
 ﻿namespace Contracts
 {
+	using System;
 	using System.Collections.Generic;
 	using Entities;
 
@@ -8,9 +9,12 @@
 		int Count();
 		void Add(GuestResponse aGuestResponse);
 		void Update(GuestResponse aGuestResponse);
-		void Delete(int aGuesResponseId);
-		GuestResponse Get(int aGuestResponseId);
+		void Delete(Guid aGuesResponseId);
+		GuestResponse Get(Guid aGuestResponseId);
 		List<GuestResponse> GetAll();
+		// Discovered the need for the following during testing
+		void DeleteAll();
+		bool Exists(Guid aId);
 
 	}
 }

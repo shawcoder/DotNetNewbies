@@ -18,7 +18,7 @@
 		// to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddSingleton<IPartyInvitesR, PartyInvitesR>();
+			services.AddTransient<IPartyInvitesR, PartyInvitesR>();
 			services.AddMvc();
 		}
 
@@ -46,7 +46,8 @@
 					(
 						name: "default"
 						, template: "{controller=Home}/{action=Index}/{id?}");
-				});
+				}
+			);
 		}
 
 		public IConfiguration Configuration { get; }

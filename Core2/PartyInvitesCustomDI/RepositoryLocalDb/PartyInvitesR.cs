@@ -13,6 +13,11 @@
 
 		}
 
+		public bool Exists(Guid aId)
+		{
+			throw new NotImplementedException();
+		}
+
 		public void Add(GuestResponse aGuestResponse)
 		{
 			throw new NotImplementedException();
@@ -23,12 +28,17 @@
 			throw new NotImplementedException();
 		}
 
-		public void Delete(int aGuesResponseId)
+		public void Delete(Guid aGuesResponseId)
 		{
 			throw new NotImplementedException();
 		}
 
-		public GuestResponse Get(int aGuestResponseId)
+		public void DeleteAll()
+		{
+			throw new NotImplementedException();
+		}
+
+		public GuestResponse Get(Guid aGuestResponseId)
 		{
 			throw new NotImplementedException();
 		}

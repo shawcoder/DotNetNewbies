@@ -15,8 +15,8 @@
 
 		public HomeController(IPartyInvitesR aPartyInvitesR)
 		{
-			_Repository = 
-				aPartyInvitesR 
+			_Repository =
+				aPartyInvitesR
 					?? throw new ArgumentNullException(nameof(aPartyInvitesR));
 			// Repository now supplied by DI
 			//_Repository = new PartyInvitesR();
@@ -74,5 +74,6 @@
 		{
 			return View(_Repository.GetAll().Where(r => r.WillAttend == true));
 		}
+
 	}
 }

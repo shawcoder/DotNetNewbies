@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE&#xD;&#xA;DEL &quot;%APPDATA%\NuGet\NuGetSimulator\*.*&quot; /Q &gt; NUL&#xD;&#xA;MOVE &quot;$(TargetDir)*.*&quot; &quot;%APPDATA%\NuGet\NuGetSimulator&quot; &gt; NUL&#xD;&#xA;GOTO END&#xD;&#xA;:NOT_RELEASE&#xD;&#xA;:END" />
+  </Target>
+
+</Project>

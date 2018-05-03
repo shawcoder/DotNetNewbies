@@ -2,6 +2,7 @@
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Linq;
 	using Contracts;
 	using Entities;
 
@@ -16,6 +17,13 @@
 			return vResult;
 		}
 
+		public bool Exists(Guid aGuestResponseId)
+		{
+			GuestResponse vGuest =
+				_Storage.FirstOrDefault(_ => _.Id.Equals(aGuestResponseId));
+			return (vGuest != null);
+		}
+
 		public void Add(GuestResponse aGuestResponse)
 		{
 			_Storage.Add(aGuestResponse);
@@ -23,20 +31,44 @@
 
 		public void Update(GuestResponse aGuestResponse)
 		{
-			throw new NotImplementedException();
+			GuestResponse vGuest =
+				_Storage.FirstOrDefault(_ => _.Id.Equals(aGuestResponse.Id));
+			vGuest?.AssignFrom(aGuestResponse);
 		}
 
-		public void Delete(int aGuesResponseId)
+		public void Delete(Guid aGuestResponseId)
 		{
-			throw new NotImplementedException();
+			GuestResponse vGuest =
+				_Storage.FirstOrDefault(_ => _.Id.Equals(aGuestResponseId));
+			if (vGuest != null)
+			{
+				_Storage.Remove(vGuest);
+			}
 		}
 
-		public GuestResponse Get(int aGuestResponseId)
+		public void DeleteAll()
 		{
-			throw new NotImplementedException();
+			_Storage.Clear();
 		}
 
-		public List<GuestResponse> GetAll() { return _Storage; }
+		public GuestResponse Get(Guid aGuestResponseId)
+		{
+			GuestResponse vResult =
+				_Storage.FirstOrDefault(_ => _.Id.Equals(aGuestResponseId));
+			return vResult;
+		}
+
+		public List<GuestResponse> GetAll()
+		{
+			List<GuestResponse> vResult = new List<GuestResponse>();
+			foreach (GuestResponse vRec in _Storage)
+			{
+				GuestResponse vNewRec = new GuestResponse();
+				vNewRec.AssignFrom(vRec);
+				vResult.Add(vNewRec);
+			}
+			return vResult;
+		}
 
 	}
 }
