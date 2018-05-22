@@ -13,7 +13,7 @@
     <PackageLicenseUrl>LicenseUrl</PackageLicenseUrl>
     <PackageProjectUrl>ProjectUrl</PackageProjectUrl>
     <PackageIconUrl>IconUrl</PackageIconUrl>
-    <Version>3.0.0.1</Version>
+    <Version>14.15.16.17</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
@@ -22,6 +22,6 @@
     </Reference>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="@echo off&#xD;&#xA;IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE&#xD;&#xA;REM ECHO dotnet &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; --T=&quot;$(TargetPath)&quot; --S=&quot;$(SolutionPath)&quot; --P=&quot;$(ProjectPath)&quot; --C=$(ConfigurationName) --V=detailed --N --E &gt; CommandLine.txt&#xD;&#xA;dotnet &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; --T=&quot;$(TargetPath)&quot; --S=&quot;$(SolutionPath)&quot; --P=&quot;$(ProjectPath)&quot; --C=$(ConfigurationName) --V=detailed --E&#xD;&#xA;:NOT_RELEASE&#xD;&#xA;:END" />
+    <Exec Command="@echo off&#xD;&#xA;IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE&#xD;&#xA;REM ECHO dotnet &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; -t &quot;$(TargetPath)&quot; -s &quot;$(SolutionPath)&quot; -p &quot;$(ProjectPath)&quot; -c $(ConfigurationName) -v detailed&#xD;&#xA;dotnet &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; -t &quot;$(TargetPath)&quot; -s &quot;$(SolutionPath)&quot; -p &quot;$(ProjectPath)&quot; -c $(ConfigurationName) -v detailed&#xD;&#xA;:NOT_RELEASE&#xD;&#xA;:END" />
   </Target>
 </Project>

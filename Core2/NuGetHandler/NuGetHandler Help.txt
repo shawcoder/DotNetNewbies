@@ -1,0 +1,736 @@
+NuGetHandler Help
+
+Add("Summary:");
+Add();
+Add("NuGetHandler is a program designed to make the developers job easier when ");
+Add("dealing with NuGet. The idea is to provide a mechanism that can be both");
+Add("standardized and automated with regards to publishing NuGet packages.");
+Add();
+Add("Packages, as created for Visual Studio, are handled by two different commands:");
+Add();
+Add(" - NugGet.exe for Full Framework packages");
+Add(" - DotNet nuget for Standard/Core packages");
+Add();
+Add("There are some provisions for handling package publication when developing with");
+Add("Standard and Core, there is no equivalent for Full Framework and even those");
+Add("that are for Standard/Core are not well documented.");
+Add();
+Add("This program solves that issue by supplying a standard methodology for");
+Add("publishing NuGet packages regardless of the environment that is targeted by the");
+Add("package itself e.g. Full Framework by simply calling on the mechanism provided");
+Add("by Microsoft to perform the actual work. This program simply facilitates the");
+Add("activity by leveraging the resources already provided by Visual Studio and the");
+Add("availability of the Post-Build event handler for each project.");
+Add();
+Add("NuGetHandler can cause the generation and publication of a package and cause");
+Add("that package to be published to multiple targets with a single call.");
+
+********************************************************************************
+********************************************************************************
+
+Add("Help on Help:");
+Add();
+Add("The command syntax for requesting additional help with NuGetHandler is:");
+Add();
+Add("  NuGetHandler -h <subject>");
+Add();
+Add("where <subject> is the desired section of help to be acquired. Given that the");
+Add("length of some of the subject matter is quite long, it is recommended that the");
+Add("output of the help system be piped to a text file for later review.");
+Add();
+Add("The list of subjects follows:");
+Add();
+Add(HelpSections.ToString());
+SectionBreak();
+Add($"{""<none>"".PadItRight()}The program summary plus this help description.");
+Add();
+Add($"{ALL.PadItRight()}Generate the entire help content (best");
+Add($"{String.Empty.PadItLeft()}redirected to a file for further perusal).");
+Add();
+Add($"{APP_CONFIG.PadItRight()}");
+Add();
+Add($"{APP_CONFIG_SETTINGS.PadItRight()}");
+Add();
+Add($"{APP_CONFIG_NUSPEC_DOTNET.PadItRight()}");
+Add();
+Add($"{APP_CONFIG_NUSPEC_NUGET.PadItRight()}");
+Add();
+Add($"{COMMAND_LINE.PadItRight()}Help on the command line switches and named value");
+Add($"{String.Empty.PadItLeft()}pairs plus the command line introduction.");
+Add();
+Add($"{COMMAND_SEQUENCE.PadItRight()}");
+Add();
+Add($"{COMMAND_SEQUENCE_DOTNET.PadItRight()}");
+Add();
+Add($"{COMMAND_SEQUENCE_DOTNET_STANDARD.PadItRight()}The sequence of commands that will execute for a");
+Add($"{String.Empty.PadItLeft()}.NET Standard project");
+Add();
+Add($"{COMMAND_SEQUENCE_NUGET.PadItRight()}");
+Add();
+Add($"{CONFIG_INFO.PadItRight()}Display the settings for the final app.config, command line");
+Add($"{String.Empty.PadItLeft()}calculated values and other information as determined by");
+Add($"{String.Empty.PadItLeft()}the program when executed. If a project was designated,");
+Add($"{String.Empty.PadItLeft()}the processed project information will be displayed.");
+Add();
+Add($"{ENVIRONMENT.PadItRight()}Help and content for the program environment.");
+Add();
+Add($"{HELP.PadItRight()}This help description.");
+Add();
+Add($"{NUGET_PUSH.PadItRight()}");
+Add();
+Add($"{NUGET_PUSH_REPOS.PadItRight()}");
+Add();
+Add($"{NUGET_PUSH_DESTINATIONS.PadItRight()}");
+Add();
+Add($"{SETUP.PadItRight()}How to prepare to install the NuGetHandler program.");
+Add();
+Add($"{SUMMARY.PadItRight()}");
+Add();
+Add($"{SWITCHES.PadItRight()}Help on just the switches");
+Add();
+Add($"{TOKENS.PadItRight()}Help on the replaceable tokens as found in the app.config");
+Add($"{String.Empty.PadItLeft()}file.");
+Add();
+Add($"{VALUES.PadItRight()}Help on just the named values.");
+Add();
+
+********************************************************************************
+********************************************************************************
+
+Add("Setup:");
+Add();
+Add("Setting up the NuGetHandler is simplicity itself if the program is generated");
+Add("from the original source using Visual Studio. The Post-Build event contans");
+Add("instructions to copy the generated program and appropriate ancillary files to ");
+Add("the desired location (the same location is the NuGet.exe program) upon ");
+Add("successful compilation of the source in Release mode.");
+Add();
+Add("However, there are a few items that need to be taken care of prior to compiling");
+Add("this program. They are:");
+Add();
+Add("- Fetch the NuGet.exe program from Microsoft. As of this writing, the executable");
+Add("  can be downloaded from the following link:  ");
+Add();
+Add("    https://www.nuget.org/downloads");
+Add();
+Add("Now, create a directory in the %APPDATA% directory for the NuGet.exe program ");
+Add(@"called ""NuGet"" (no quotes, of course). This is the default location presumed by ");
+Add("the NuGetHandler program for the location of the NuGet.exe program.");
+Add();
+Add("Copy the downloaded version of NuGet.exe to the aforementioned directory, open");
+Add("a command prompt and execute the NuGet.exe program with no parameters. This has");
+Add("the effect of creating the default NuGet.config file which makes NuGet happy.");
+Add();
+Add("The NuGetHandler program does not use the NuGet.config file but the authors of");
+Add("the NuGet.exe program recomend that it exist for NuGet.exe to use.");
+Add();
+Add(@"- In the %APPDATA%\NuGet directory, create an additional directory, ""win10 - x64"".");
+Add("  This is the default installation directory for the NuGetHandler program ");
+Add("  itself.");
+Add("  If allowed to execute, the Post-Build event of the NuGetHandler program, upon");
+Add("  successful compilation in Release mode of the program, will copy the result");
+Add("  to this location. One need not add the path to the Environment as the call to");
+Add("  the NuGetHandler program itself is fully specified in the call sequence for ");
+Add("  each project. The full specification for the command sequence for a ");
+Add("  NuGet-eligible project follows:");
+Add();
+Add("@echo off");
+Add("IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE");
+Add(@"dotnet  ""% APPDATA %\NuGet\win10 - x64\NuGetHandler.dll"" -T ""$(TargetPath)"" -S ""$(SolutionPath)"" -P ""$(ProjectPath)"" -C $(ConfigurationName) -V quiet");
+Add(":NOT_RELEASE");
+Add(":END");
+Add();
+Add("Place the above script, verbatim, into the Post-Build event of each project to ");
+Add("be made NuGetHandler eligible and the command will take care of the rest. And");
+Add("yes, the quotes in the above script ARE required.");
+Add();
+Add("As can be seen by the call itself, there is no need to clutter up the ");
+Add("Environment path with extraneous information. The .NET Core framework is");
+Add(@"presumed to have already been installed thus the call to "dotnet.exe"" will be");
+Add("valid.");
+Add();
+Add("Obviously, other switches can be added as desired, but the above is the minimum");
+Add("necessary to make a project NuGetHandler-eligible.");
+
+********************************************************************************
+********************************************************************************
+
+Add("Command line:");
+Add();
+Add("Command line values come in three types:");
+Add();
+Add("  1.  Switches: Switches are command line values which are preceded by");
+Add("                either a double dash (--) or a slash (/).");
+Add();
+Add("      Switches are defined as indicators which are either present or");
+Add("      not present on the command line. If present, then the strongly-typed");
+Add("      container value whose name matches the switch name will be set to");
+Add("      true, indicating that the switch was found as part of the command line.");
+Add("        ");
+Add("        --NoOp");
+Add();
+Add("        - or its variant -");
+Add();
+Add("        --N");
+Add();
+Add("      SWITCHES ARE CASE-**IN**-SENSITIVE!");
+Add();
+Add("  2.  Named Values: Named values are command line values which come in");
+Add("                    pairs. First the owning name of the named value,");
+Add("                    which is preceded by a SINGLE dash (-), followed by");
+Add(@"                    the ""value"" portion of the named value pair, separated by");
+Add("                    a space.");
+Add();
+Add(@"        -ProjectPath ""C:\Some\Project\Path\File""");
+Add();
+Add("      Note that values that contain a space *MUST* be enclosed in double quotes.");
+Add();
+Add("  3.  Values. Values are POSITION DEPENDENT arguments whose postion in");
+Add("      the command line argument string determines their function within");
+Add(@"      the application e.g. If the value ""C:\Dir"" is in position 1, it");
+Add("      may tell the program where to look for a config file, if in");
+Add("      position 2, it might tell where to find a source file, if it follows a");
+Add("      named value indicator, then it's the value to be assigned to the named");
+Add("      value.");
+
+********************************************************************************
+********************************************************************************
+
+Add("Switches:");
+Add();
+Add("--D:  DeleteFromNuGet. This switch tells NuGetHandler to engage the deletion");
+Add("      function in that the file in the PackageHomeDir named (by default, the");
+Add("      user can change this) DeleteFromNuGet.del will be opened, scanned and");
+Add("      each entry applied as a request to delete the package from the requisite");
+Add("      NuGet server.");
+Add();
+Add("--E:  ShowEnvironment. If included, this switch will cause the NuGetHandler");
+Add("      program to show the content of the command line, various final values");
+Add("      as brought in from the various app.*.config files, etc. Normally used");
+Add("      for debugging.");
+Add();
+Add("--M:  MergeDeletions. As each package is successfully pushed to a NuGet server,");
+Add("      the program creates a .del file which contains the package name, version,");
+Add("      location sent to, etc. If the user wishes to clean up one or more");
+Add("      NuGet servers, then this command must be executed prior to calling ");
+Add(@"      NuGetHandler with the aforementioned ""D"" switch. The function of this");
+Add("      switch is to cause NuGetHandler to open all of the .del files, scan the");
+Add("      content and append it to the DeleteFromNuGet.del file. This file can then");
+Add("      be edited, by the user in any text editor, to select which of the desired");
+Add("      package instances should be deleted. If an entry is deleted from the ");
+Add("      DeleteFromNuGet.del file prior to execution, that file will not be");
+Add("      deleted nor will the package be removed from the NuGet server. The format");
+Add("      of the .del file name is <some GUID>.del. The GUID portion of the name");
+Add("      will be included in the DeleteFromNuGet.del file so that when the package");
+Add("      is successfully deleted from the NuGet server, the corresponding .del ");
+Add("      file will also be deleted.");
+Add();
+Add("--N:  NoOp. Basically, tell the NuGetHandler to not do anything.");
+Add();
+Add("--Q:  NoSpawn. Tell NuGetHandler to process the entire project file as if it");
+Add("      were going to pack/push, etc. the designated project but to not actually");
+Add("      process the project. Mainly used for debugging.");
+Add();
+Add("--C:  ConfigurationName e.g. Release | Debug | etc.");
+Add();
+Add("--W:  Wait (Show a message at execution conclusion and wait for a keypress).");
+
+********************************************************************************
+********************************************************************************
+
+Add("Command Line Named Values");
+Add();
+Add("-P:   ProjectPath. The full path to the project including the project name and");
+Add("      extension.");
+Add();
+Add("-H:   Show Help. This must be followed by a help topic. If none is supplied then");
+Add("      the help on help section will be displayed.");
+Add();
+Add("-S:   SolutionPath. Full path to the solution including the solution name and");
+Add("      extension.");
+Add();
+Add("-T:   TargetPath. Full path to the destination. This is normally a directory set");
+Add(@"      up in the %APPDATA%\NuGet directory (at least, that's the default) that");
+Add("      will contain the output NuGet packages. The packages themselves are");
+Add("      separated into their respective solution directories, each of which contains");
+Add("      the project package which, in turn, is stored in a sub-directory of the");
+Add("      package name as a version. e.g.");
+Add();
+Add(@"      %APPDATA%\NuGet\PackageHome\<solution>\<project>\<version>");
+Add();
+Add("-V:   Verbosity. Allowed verbosity values: quiet, normal, detailed.");
+Add();
+Add("-U:   PushToDestination. The name of the repository set to push to. This value,");
+Add("      if used, will override ALL values provided in the various app.*.config");
+Add("      files.");
+
+********************************************************************************
+********************************************************************************
+
+App.config content
+
+********************************************************************************
+********************************************************************************
+
+Add($@"appSettings");
+Add();
+Add($@"<add key=""SuspendHandling"" value=""false""/>");
+Add();
+Add($@"- When set to ""true"" causes the program to do nothing. It starts, reads the ");
+Add($@"  config file, notices this setting as set to ""true"" and quits.");
+Add();
+Add($@"<add key=""PushToDestination"" value=""HomeNew""/>");
+Add();
+Add($@"- What set of NuGet servers (repositories) the package will be uploaded to");
+Add($@"  (see below for an explanation of named repositories).");
+Add();
+Add($@"<add key=""AllowOptionalAppConfig"" value=""true""/>");
+Add();
+Add($@"- If set to ""true"", then the app.config as found in the NuGetHandler home");
+Add($@"  directory is only the first of a possible series of app.config files that");
+Add($@"  will be processed when the program first starts. ");
+Add($@"  ");
+Add($@"  The initial App.config file will be processed and stored, then, if this ");
+Add($@"  setting is ""true"", the next location searched will be the solution directory.");
+Add($@"  The file sought is named App.optional.config and will be loaded next and its");
+Add($@"  values applied to those already stored from the initial App.config load. If");
+Add($@"  a third app.optional.config file is found in the project directory, it, too,");
+Add($@"  will be loaded and its values applied to the current configuration.");
+Add($@"  ");
+Add($@"  This allows the system to have a ""general"" configuration, one tailored to a");
+Add($@"  solution and finally a configuration tailored to a particuolar project.");
+Add();
+Add($@"  It used to be possible to game the system in Full Framework by breaking the");
+Add($@"  AssemblyInfo.cs file into two pieces - those that are common to all projects");
+Add($@"  and those that are particular to a specific project. The nice part is that ");
+Add($@"  things like ""Version"" could be brought into the ""common"" section and entire");
+Add($@"  solutions or even multiple solutions all given the same version number by");
+Add($@"  adding the comnmon AssemblyInfo.cs file via a link vs adding a copy of the");
+Add($@"  file to the project. With the advent of Standard/Core, this is no longer");
+Add($@"  possible as the entire AssemblyInfo.cs file is now missing and its content");
+Add($@"  handled as a section within the .csproj file.");
+Add();
+Add($@"  To overcome this limitation, the user may opt to use the following two");
+Add($@"  configuration override commands to alter the configuration of NuGetHandler.");
+Add();
+Add($@"<add key=""UseConfigOverride"" value=""true""/>");
+Add();
+Add($@"- If set to ""true"", then an alternate app.optional.config file located in a");
+Add($@"  specified location will be used in place of the tiered app.optional.config");
+Add($@"  setting set as described elsewhere.");
+Add();
+Add($@"<add key=""ConfigOverrideDir"" value=""""/>");
+Add();
+Add($@"- If UseConfigOverride is set to ""true"", then the location of the ");
+Add($@"  app.optional.config file to be used will be in the director specified by this");
+Add($@"  key. The value should be in the form of an actual directory, meaning that the");
+Add($@"  value should end in a trailing path delimiter character.");
+Add();
+Add($@"<add key=""ForceVersionOverride"" value=""true""/>");
+Add();
+Add($@"- If set to ""true"", then the version that is found in the AssemblyInfo.cs");
+Add($@"  file (Full Framework) or the version that is found in the .csproj file for");
+Add($@"  Standard/Core will be overridden with the value specifed.");
+Add();
+Add($@"  It should be noted that if this value is set to ""true"" it also overrides any");
+Add($@"  value found in the respective ""XXXNuSpec"" values sections as outlined ");
+Add($@"  elsewhere.");
+Add($@"  Each type of project can have its own version override if desired, however, if");
+Add($@"  this value is set to ""true"", then it overrides the overrides. IOW, this value");
+Add($@"  wins regardless of .NET environment.");
+Add();
+Add($@"<add key=""VersionOverride"" value=""9.8.7.6""/>");
+Add();
+Add($@"- If ForceVersionOverride is set to ""true"", then use this value as the version");
+Add($@"  vice what is found in the respective project or the sections defined ");
+Add($@"  elsewhere.");
+Add();
+Add($@"<add key=""NuGetDir"" value=""%APPDATA%\NuGet\"" /> ");
+Add();
+Add($@"- Location directory of the ""NuGet.exe"" program. Notice that the directory");
+Add($@"  entry ENDS WITH A PATH DELIMITER! This is REQUIRED.");
+Add();
+Add($@"<add key=""NuGetExeName"" value=""NuGet""/>");
+Add();
+Add($@"- Name of the NuGet.exe program. Notice that the name DOES NOT end with "".exe"".");
+Add();
+Add($@"<add key=""DotNetDir"" value=""%PROGRAMFILES%\dotnet""/>");
+Add();
+Add($@"-  The location directory of the ""dotnet.exe"" program. Notice that the directory");
+Add($@"  entry ENDS WITH A PATH DELIMITER! This is REQUIRED.");
+Add();
+Add($@"<add key=""DotNetName"" value=""dotnet""/>");
+Add();
+Add($@"-  Name of the ""dotnet.exe"" program. Notice that the name DOES NOT end with ");
+Add($@"  "".exe"".");
+Add();
+Add($@"<add key=""DotNetVerb"" value=""nuget""/>");
+Add();
+Add($@"- The ""dotnet.exe"" program is goofy when it comes to NuGet handling. The ");
+Add($@"  ""dotnet"" program uses ""pack"" directly e.g. dotnet pack ... whereas to ""push""");
+Add($@"  or ""delete"", the program uses the ""nuget"" verb e.g. ""dotnet nuget push ..."".");
+Add($@"  Therefore, this verb is used to add to the command line where appropriate.");
+Add($@"  See below for command line definitions and this will become clearer.");
+Add($@"  ");
+Add($@"<add key=""UseSimulator"" value=""false""/>");
+Add();
+Add($@"- Instead of actually calling the NuGet.exe or dotnet.exe program, call a");
+Add($@"  simulator instead. The solution for this application contains a simulator");
+Add($@"  for both NuGet.exe (a Full Framework console application) and a dotnet");
+Add($@"  simulator for dotnet.exe. If this value is et to ""true"", then those");
+Add($@"  simulators will be invoked instead of the actual programs.");
+Add();
+Add($@"<add key=""DotNetSimulatorDir"" value=""%APPDATA%\NuGet\NuGetSimulator\"" /> ");
+Add();
+Add($@"- The directory in which the dotnet.exe simulator lives.");
+Add();
+Add($@"<add key=""DotNetSimulatorExeName"" value=""NuGetSimulator.dll""/>");
+Add($@"- The name of the dotnet.exe simulator.");
+Add();
+Add($@"<add key=""NuGetSimulatorDir"" value=""%APPDATA%\NuGet\NuGetSimulatorFF\"" /> ");
+Add();
+Add($@"- The directory of the NuGet.exe simulator.");
+Add();
+Add($@"<add key=""NuGetSimulatorExeName"" value=""NuGetSimulator""/>");
+Add();
+Add($@"- The name of the NuGet.exe simulator.");
+Add();
+Add($@"<add key=""DefaultVerbosity"" value=""quiet""/>");
+Add();
+Add($@"- Level of verbosity exhibited by this program. Valid values are quiet, ");
+Add($@"  normal and detailed.");
+Add();
+Add($@"<add key=""PackageHomeDir"" value=""%APPDATA%\NuGet\PackageHome\"" /> ");
+Add();
+Add($@"- Once generated, the location in which the resultant package is stored.");
+Add();
+Add($@"<add key=""RequireReleaseNotesFile"" value=""false""/>");
+Add();
+Add($@"- If set to ""true"", then a Release Notes file containing text concerning");
+Add($@"  the release of the particular version of the package will be a required");
+Add($@"  item. The ReleaseNotes.txt file (or whatever the chosen name is) should be");
+Add($@"  located in the same directory as the project file.");
+Add();
+Add($@"<add key=""ReleaseNotesFileName"" value=""ReleaseNotes.txt""/>");
+Add();
+Add($@"- Name of the release notes file.");
+Add();
+Add($@"<add key=""InjectDefaultReleaseNotes"" value=""true""/>");
+Add();
+Add($@"- If no release notes are found for a particular build, then insert a standard");
+Add($@"  release note if this value is set to ""true"".");
+Add();
+Add($@"<add key=""DefaultReleaseNotes"" value=""No Custom Release Notes for""/>");
+Add();
+Add($@"- The value to be inserted if InjectDefaultReleaseNotes is set to ""true"".");
+Add();
+Add($@"<add key=""RequireSummaryFile"" value=""false""/>");
+Add();
+Add($@"- Similiar to ReleaseNotes, the NuGet.exe program allows the inclusion of");
+Add($@"  a package summary statement. If this value is set to ""true"", then a text");
+Add($@"  file with the package summary will be required.");
+Add();
+Add($@"<add key=""SummaryFileName"" value=""Summary.txt""/>");
+Add();
+Add($@"- The name of the summary file to use.");
+Add();
+Add($@"<!--The DefaultDeleteFileName file will be stored in the PackageHomeDir-->");
+Add($@"<add key=""DefaultDeleteFileName"" value=""DeleteFromNuGet.del""/>");
+Add();
+Add($@"- The name of the Delete file. See the --D flag concerning deletions for further");
+Add($@"  information.");
+Add();
+Add($@"<add key=""UseNuSpecFileIfAvailable"" value=""true""/>");
+Add();
+Add($@"- NuGet.exe will create a .nuspec file on demand that extracts the various");
+Add($@"  values as found in the AssemblyInfo.cs file and places them in an external");
+Add($@"  .nuspec file on demand. This file can then be used by NuGet.exe to create");
+Add($@"  the desired package. If this value is set to ""true"", it is presumed that");
+Add($@"  a Nuget spec command will be issued (this program assumes that one will be ");
+Add($@"  used and acts accordingly).");
+Add();
+Add($@"<!--Replaceable Token Values-->");
+Add();
+Add($@"- See the various command line parameter definitions for NuGet.exe and ");
+Add($@"  dotnet.exe for the meaning and use of the following values:");
+Add();
+Add($@"  The command line definitions follow in the app.config file and allow");
+Add($@"  replaceable tokens whose value is assigned here to be placed on the specified");
+Add($@"  command line and later replaced with the value assigned here when the ");
+Add($@"  particular command is invoked.");
+Add();
+Add($@"  Each token is in the form of $<token name>$ where <token name> is one of the");
+Add($@"  following tokens e.g. ConfigFile => $ConfigFile$.");
+Add();
+Add($@"<add key=""BasePath"" value=""""/>");
+Add($@"<add key=""ConfigFile"" value=""""/>");
+Add($@"<add key=""VerbosityDotNet"" value=""minimal""/>");
+Add($@"<add key=""VersionSuffixDotNet"" value=""""/>");
+Add($@"<add key=""Exclude"" value=""""/>");
+Add($@"<add key=""MinBuildVersion"" value=""""/>");
+Add($@"<add key=""MinClientVersion"" value=""""/>");
+Add($@"<add key=""MSBuildPath"" value=""""/>");
+Add($@"<add key=""MSBuildVersion"" value=""""/>");
+Add($@"<add key=""VerbosityNuGet"" value=""normal""/>");
+Add($@"<add key=""VersionSuffixNuGet"" value=""""/>");
+Add($@"<add key=""Properties"" value=""""/>");
+Add($@"<add key=""Root"" value=""""/>");
+Add($@"<add key=""RuntimeIdentifier"" value=""""/>");
+Add($@"<add key=""Timeout"" value=""""/>");
+
+********************************************************************************
+
+Add(@"NuGet NuSpec settings");
+Add();
+Add(@"- If one examines the content of the generated .nuspec file by executing");
+Add(@"  NuGet spec in the same directory as the targeted project, one will discover");
+Add(@"  that a .nuspec file has been created. This file will contain replacable tokens");
+Add(@"  whose assigned values may be assigned here. ");
+Add();
+Add(@"  Note that ""Id"" and ""Version"" are handled elsewhere. The ""Id"" value is left ");
+Add(@"  as-is, ""Version"" is handled by the ""ForceVersionOverride"" and ");
+Add(@"  ""VersionOverride"" values as found in the app settings section.");
+Add();
+Add(@"  The following represents a typical .nuspec file just after creation:");
+Add();
+Add(@"<?xml version=""1.0""?>");
+Add(@"<package >");
+Add(@"  <metadata>");
+Add(@"    <id>$id$</id>");
+Add(@"    <version>$version$</version>");
+Add(@"    <title>$title$</title>");
+Add(@"    <authors>$author$</authors>");
+Add(@"    <owners>$author$</owners>");
+Add(@"    <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>");
+Add(@"    <projectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</projectUrl>");
+Add(@"    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>");
+Add(@"    <requireLicenseAcceptance>false</requireLicenseAcceptance>");
+Add(@"    <description>$description$</description>");
+Add(@"    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>");
+Add(@"    <copyright>Copyright 2018</copyright>");
+Add(@"    <tags>Tag1 Tag2</tags>");
+Add(@"  </metadata>");
+Add(@"</package>");
+Add();
+Add(@"- To assign a value to the .nuspec file, one need only set the appropriate");
+Add(@"  ForceXXX value to ""true"" and give an appropriate value to the associatedkey.");
+Add(@"  If the ForceXXX value is set to ""false"", the associated value will NOT be");
+Add(@"  used and the value, if any, that can be derived from the AssemblyInfo.cs file");
+Add(@"  will be inserted in its place when the package is created.");
+Add();
+Add(@"<add key=""ForceAuthors"" value=""false""/>");
+Add(@"<add key=""Authors"" value=""Authored by Az Web Engineering""/>");
+Add(@"<add key=""ForceCopyright"" value=""false""/>");
+Add(@"<add key=""Copyright"" value=""Copyright © 2015 Az Web Engineering""/>");
+Add(@"<add key=""ForceDescription"" value=""false""/>");
+Add(@"<add key=""Description"" value=""App.config Description.""/>");
+Add(@"<add key=""ForceIconUrl"" value=""false""/>");
+Add(@"<add key=""IconUrl"" value=""/>");
+Add(@"<add key=""ForceLicenseUrl"" value=""false""/>");
+Add(@"<add key=""LicenseUrl"" value=""/>");
+Add(@"<add key=""ForceOwners"" value=""false""/>");
+Add(@"<add key=""Owners"" value=""Owned By Az Web Engineering""/>");
+Add(@"<add key=""ForceProjectUrl"" value=""false""/>");
+Add(@"<add key=""ProjectUrl"" value=""/>");
+Add(@"<add key=""ForceReleaseNotes"" value=""false""/>");
+Add(@"<add key=""ReleaseNotes"" value=""App.config Release Notes.""/>");
+Add(@"<add key=""ForceRequireLicenseAcceptance"" value=""false""/>");
+Add(@"<add key=""RequireLicenseAcceptance"" value=""false""/>");
+Add(@"<add key=""ForceSummary"" value=""false""/>");
+Add(@"<add key=""Summary"" value=""App.config Summary""/>");
+Add(@"<add key=""ForceTags"" value=""false""/>");
+Add(@"<add key=""Tags"" value=""AWE""/>");
+Add(@"<add key=""ForceTitle"" value=""false""/>");
+Add(@"<add key=""Title"" value=""/>");
+Add(@"<add key=""ForceVersion"" value=""false""/>");
+Add(@"<add key=""Version"" value=""/>");
+
+********************************************************************************
+
+Add("- The dotnet.exe equivalent of a NuGet .nuspec file (if one were possible) is");
+Add("  here. These values actually represent the values found in one section of the ");
+Add("  .csproj file as created for .NET Standard/Core projects. Given that ");
+Add("  Standard/Core projects to not have a .nuspec file that can be created for ");
+Add("  them, it is necessary to modify the .csproj file directly and apply the values ");
+Add("  as necessary.");
+Add();
+Add("  *** Looks like ""Company"" equals ""Owners"" above.");
+Add("  *** The value of the NuGet ""Summary"" equals the dotnet ""Product"".");
+Add();
+Add("- The following is an extraction from a .NET Standard project .csproj file with");
+Add("  the equivalent values expressed.");
+Add();
+Add("  <AssemblyVersion>5.0.0.1</AssemblyVersion>");
+Add("  <Authors>Authoried by Az Web Engineering</Authors>");
+Add("  <Company>Company is Authoried by Az Web Engineering</Company>");
+Add("  <Copyright>Copyright ©  Az Web Engineering 2018</Copyright>");
+Add("  <Description>External handler for NuGet and dotnet nuget.</Description>");
+Add("  <FileVersion>2.0.0.0</FileVersion>");
+Add("  <PackageIconUrl>Url</PackageIconUrl>");
+Add("  <PackageLicenseUrl>LicenseUrl</PackageLicenseUrl>");
+Add("  <PackageProjectUrl>ProjectUrl</PackageProjectUrl>");
+Add("  <PackageReleaseNotes>Relase Notes</PackageReleaseNotes>");
+Add("  <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>");
+Add("  <PackageTags>AWE</PackageTags>");
+Add("  <Version>4.0.0.1</Version>");
+Add("  <Product>Some Product Summary</Product>");
+Add();
+Add("DotNet NuSpec settings (if DotNet nuget where to have such a thing as a .nuspec");
+Add("file)");
+Add();
+Add(@"<add key=""UseNuGetNuSpecValues"" value=""false""/>");
+Add();
+Add(@"- If this value is set to ""true"", then the assigned values from the following");
+Add(@"  will be applied to the .csproj file and then those values will be applied");
+Add(@"  when the assembly is ""packed"" in preparation for creating the package.");
+Add(@"  ");
+Add(@"  If the value is set to ""false"", then the values as found in the .csproj file");
+Add(@"  will be used.");
+Add();
+Add(@"<add key=""ForceAssemblyVersion"" value=""false""/>");
+Add(@"<add key=""AssemblyVersion"" value=""/>");
+Add(@"<add key=""ForceAuthors"" value=""true""/>");
+Add(@"<add key=""Authors"" value=""Az Web Engineering senior development team""/>");
+Add(@"<add key=""ForceCompany"" value=""false""/>");
+Add(@"<add key=""Company"" value=""Az Web Engineering""/>");
+Add(@"<add key=""ForceCopyright"" value=""false""/>");
+Add(@"<add key=""Copyright"" value=""/>");
+Add(@"<add key=""ForceDescription"" value=""false""/>");
+Add(@"<add key=""Description"" value=""/>");
+Add(@"<add key=""ForceFileVersion"" value=""false""/>");
+Add(@"<add key=""FileVersion"" value=""/>");
+Add(@"<add key=""ForcePackageIconUrl"" value=""false""/>");
+Add(@"<add key=""PackageIconUrl"" value=""/>");
+Add(@"<add key=""ForcePackageLicenseUrl"" value=""false""/>");
+Add(@"<add key=""PackageLicenseUrl"" value=""/>");
+Add(@"<add key=""ForcePackageProjectUrl"" value=""false""/>");
+Add(@"<add key=""PackageProjectUrl"" value=""/>");
+Add(@"<add key=""ForcePackageReleaseNotes"" value=""false""/>");
+Add(@"<add key=""PackageReleaseNotes"" value=""/>");
+Add(@"<add key=""ForcePackageRequireLicenseAcceptance"" value=""false""/>");
+Add(@"<add key=""PackageRequireLicenseAcceptance"" value=""/>");
+Add(@"<add key=""ForcePackageTags"" value=""false""/>");
+Add(@"<add key=""PackageTags"" value=""/>");
+Add(@"<add key=""ForceVersion"" value=""false""/>");
+Add(@"<add key=""Version"" value=""/>");
+
+********************************************************************************
+********************************************************************************
+
+Add(@"DotNetFullFrameworkCommandSequence");
+Add();
+Add(@"- The following are the definitions of the various command line sequences to be");
+Add(@"  used with the NuGet.exe program. The ""key"" portion will be used as the ");
+Add(@"  NuGet ""verb"" aka command, e.g. nuget pack, to be executed. The ""value"" portion");
+Add(@"  represents the actual command line before token substitution.");
+Add();
+Add(@"  As a for instance, the ""spec"" command contains the following replaceable ");
+Add(@"  tokens:");
+Add(@"    $AssemblyPath$");
+Add(@"    $VerbosityNuget$");
+Add();
+Add(@"  The $AssemblyPath$ is the full path to the .csproj file.");
+Add(@"  The $VerbosityNuget$ is the verbosity level of the nuget.exe program.");
+Add();
+Add(@"  See the respective help files for NuGet.exe for additional details on the ");
+Add(@"  structure and content of each command that is supported by nuget.exe.");
+Add();
+Add(@"  Change these values as appropriate for new versions of NuGet.exe. The current");
+Add(@"  version as of the writing of this help file is 4.5.1.4879.");
+Add();
+Add(@"<add key=""spec"" value='-AssemblyPath ""$AssemblyPath$" -force -NonInteractive -verbosity $VerbosityNuGet$'/>");
+Add(@"<add key=""pack"" value='""$ProjectPath$" -ExcludeEmptyDirectories -IncludeReferencedProjects -OutputDirectory ""$OutputPackageTo$" -Verbosity $VerbosityNuGet$ -Version $PackageVersion$'/>");
+Add(@"<add key=""push"" value='$PackagePath$ -Source $Source$ -ApiKey $ApiKey$ -Verbosity $VerbosityNuGet$ -NonInteractive'/>");
+Add(@"<add key=""add"" value='$PackagePath$ -Source $Source$ -ApiKey $ApiKey$ -Verbosity $VerbosityNuGet$ -NonInteractive'/>");
+Add(@"<add key=""delete"" value='$PackageId$ $PackageVersion$ -Source $Source$ -ApiKey $ApiKey$ -NonInteractive-Verbosity $VerbosityNuGet$'/> ");
+
+********************************************************************************
+********************************************************************************
+********************************************************************************
+********************************************************************************
+********************************************************************************
+
+/*
+
+Apparently, the following command line works just as well. I had wondered about
+the loss of setting the ""version"" like one can in NuGet.exe. This allows for that.
+Note that ""publish"" can be replaced by ""pack"".
+
+dotnet publish /property:Version=1.2.3.4
+
+Read further on this page: https://docs.microsoft.com/en-us/dotnet/standard/frameworks
+
+*/
+
+********************************************************************************
+********************************************************************************
+********************************************************************************
+********************************************************************************
+********************************************************************************
+
+Add(@"DotNetStandard_2_0_CommandSequence");ss
+Add();
+Add(@"<!--All keys must be expressed as lower case values e.g. ""pack""-->");
+Add(@"<add key=""pack"" value='""$ProjectPath$"" --configuration $ConfigurationName$ --force --no-build --no-restore --output ""$OutputPackageTo$"" --serviceable --verbosity $VerbosityDotNet$'/>");
+Add(@"<add key=""push"" value='""$PackagePath$"" --source $Source$ --api-key $ApiKey$'/>");
+Add(@"<add key=""delete"" value='$PackageId$ $PackageVersion$ --source $Source$ --non-interactive --api-key $ApiKey$'/>");
+
+********************************************************************************
+
+Add(@"DotNetCore_2_0_CommandSequence");
+Add();
+Add(@"<!--All keys must be expressed as lower case values e.g. ""pack""-->");
+Add(@"<add key=""pack"" value='""$ProjectPath$" --configuration $ConfigurationName$ --force --no-build --no-restore --output ""$OutputPackageTo$" --serviceable --verbosity $VerbosityDotNet$'/>");
+Add(@"<add key=""push"" value='""$PackagePath$" --source $Source$ --api-key $ApiKey$'/>");
+Add(@"<add key=""delete"" value='$PackageId$ $PackageVersion$ --source $Source$ --non-interactive --api-key $ApiKey$'/>");
+
+********************************************************************************
+
+Add("NuGetRepos");
+Add();
+Add("- This section is where the various destinations are defined. Each destination");
+Add("  represents a diffrerent NuGet server or share (only in the case of NuGet.exe).");
+Add();
+Add("  The following entries *MUST* come in pairs or quads unless the entry is a");
+Add("  local share. ");
+Add("  ");
+Add("  Each entry translates as follows:");
+Add("    key=Arbritrary name given to the NuGet server e.g. ""LocalVM""");
+Add();
+Add("    value=Path to the NuGet Server (or local share)");
+Add("          API Key to the NuGet Server (blank for a local share)");
+Add("          Path to the NuGet Symbols Server");
+Add("          API Key to the NuGet Symbols Server");
+Add("  ");
+Add("  The entries for the symbol server are optional. ");
+Add("  Each entry *MUST* be delimited by a semi-colon (;), even if the API Key is");
+Add("  blank, it's position *MUST* be delimited by a semi-colon in order for the");
+Add("  symbol server values to match up correctly.");
+Add();
+Add(@"<add key=""LocalVM"" value=""http://localhost:2017/api/v2/package;{B598D282-1039-427A-A09B-73CEFC95986E}""/>");
+Add(@"<add key=""Home"" value=""http://10.20.30.40/api/v2/package;{0BD38176-3B76-4BFC-8E11-D6DE2ED0081C}""/>");
+Add(@"<add key=""HomeNew"" value=""http://www.awenugetserver3.com/nuget;{589B0E44-2820-4F77-8AF4-1BB0D21B177D}""/>");
+Add(@"<add key=""localShare"" value=""c:\Packages2017\LocalRepository""/>");
+
+********************************************************************************
+
+Add("NuGetDestinations (examples)");
+Add();
+Add("- These values represent the ""PushDestination"" value as defined elsewhere.");
+Add();
+Add("  Each PushDestination is a unique name that represents one or more NuGet");
+Add("  servers (repos) that a newly-created package will be pushed to.");
+Add();
+Add("  One constructs a PushDestination by giving it a unique name and setting its");
+Add("  value to one or more NuGetRepos entries e.g. if a Repo (NuGet server) has a");
+Add("  name of ""LocalVM"" and another has a name of ""Home"", then a default");
+Add("  PushDestination might be given a name of ""Default"" and its value set to");
+Add("  ""LocalVM;Home"", the result being that a newly created package will be pushed");
+Add("  to both the LocalVM NuGet server and the Home NuGet server.");
+Add("  ");
+Add(@"<add key=""Default"" value=""LocalVM;HomeNew""/>");
+Add(@"<add key=""DefaultTest"" value=""LocalVM;HomeNew;Home;LocalShare""/>");
+Add(@"<add key=""LocalOnly"" value=""LocalVM""/>");
+Add(@"<add key=""HomeHome"" value=""Home""/>");
+Add(@"<add key=""HomeNewHome"" value=""HomeNew""/>");
+Add(@"<add key=""LocalShareLocalShare"" value=""localShare""/>");

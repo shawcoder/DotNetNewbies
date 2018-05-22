@@ -25,6 +25,9 @@
 
 		public static string ConfigurationName { get; set; }
 
+		public static string InternalVersionSelector { get; set; }
+		public static InternalVersionSelectorE SelectedVersion { get; set; }
+		public static string OverrideVersion { get; set; }
 		public static string PushToDestination { get; set; }
 		public static string Verbosity { get; set; }
 		public static VerbosityE VerbosityLevel { get; set; }
@@ -41,8 +44,8 @@
 		/// <summary>
 		/// The "H" switch
 		/// </summary>
-		//public static bool ShowHelp { get; set; }
-		public static string ShowHelp { get; set; }
+		//public static bool Help { get; set; }
+		public static string Help { get; set; }
 		/// <summary>
 		/// The "O" switch
 		/// If set to true, process the project, but do NOT spawn the command set.
@@ -63,6 +66,8 @@
 
 	public class CommandLineValues
 	{
+		private string _InternalVersionSelector;
+
 		public string TargetPath { get; set; }
 		public string TargetDir { get; set; }
 		public string TargetExt { get; set; }
@@ -83,12 +88,14 @@
 
 		public string ConfigurationName { get; set; }
 
+		public string InternalVersionSelector { get; set; }
+		public InternalVersionSelectorE SelectedVersion { get; set; }
+		public string OverrideVersion { get; set; }
 		public string PushToDestination { get; set; }
 		public string Verbosity { get; set; }
 		public VerbosityE VerbosityLevel { get; set; }
 		public bool MergeDeletes { get; set; }
 		public bool PerformDeletes { get; set; }
-		//public string HelpSection { get; set; }
 
 		// Switches (Flags)
 		/// <summary>
@@ -99,8 +106,8 @@
 		/// <summary>
 		/// The "H" switch
 		/// </summary>
-		//public bool ShowHelp { get; set; }
-		public string ShowHelp { get; set; }
+		//public bool Help { get; set; }
+		public string Help { get; set; }
 		/// <summary>
 		/// The "O" switch
 		/// If set to true, process the project, but do NOT spawn the command set.
@@ -160,10 +167,19 @@
 				Verbosity = aCommandLineValues.Verbosity;
 				VerbosityLevel = aCommandLineValues.VerbosityLevel;
 			}
+			if (!String.IsNullOrWhiteSpace(aCommandLineValues.InternalVersionSelector))
+			{
+				InternalVersionSelector = aCommandLineValues.InternalVersionSelector;
+				SelectedVersion = aCommandLineValues.SelectedVersion;
+			}
+			if (!String.IsNullOrWhiteSpace(aCommandLineValues.OverrideVersion))
+			{
+				OverrideVersion = aCommandLineValues.OverrideVersion;
+			}
 			MergeDeletions = aCommandLineValues.MergeDeletes;
 			PerformDeletes = aCommandLineValues.PerformDeletes;
 			Wait = aCommandLineValues.Wait;
-			ShowHelp = aCommandLineValues.ShowHelp;
+			CommandLineSettings.Help = aCommandLineValues.Help;
 			//HelpSection = aCommandLineValues.HelpSection;
 			NoOp = aCommandLineValues.NoOp;
 			NoSpawn = aCommandLineValues.NoSpawn;
@@ -193,12 +209,16 @@
 			ProjectFileName = String.Empty;
 			ProjectName = String.Empty;
 			ConfigurationName = String.Empty;
+			InternalVersionSelector = String.Empty;
+			SelectedVersion = InternalVersionSelectorE.Unknown;
+			OverrideVersion = String.Empty;
 			Verbosity = "detailed";
 			VerbosityLevel = VerbosityE.Detailed;
 			MergeDeletions = false;
+			OverrideVersion = String.Empty;
 			PerformDeletes = false;
 			Wait = true;
-			ShowHelp = HelpSections.ALL;
+			CommandLineSettings.Help = HelpSections.ALL;
 			//HelpSection = aCommandLineValues.HelpSection;
 			NoOp = true;
 			NoSpawn = true;

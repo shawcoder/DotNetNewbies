@@ -38,7 +38,7 @@
 				.Replace(MIN_CLIENT_VERSION.AsToken(), MinClientVersion)
 				.Replace(MS_BUILD_PATH.AsToken(), MSBuildPath)
 				.Replace(MS_BUILD_VERSION.AsToken(), MSBuildVersion)
-//				.Replace(OUTPUT_PACKAGE_TO.AsToken(), PackagePath)
+				//				.Replace(OUTPUT_PACKAGE_TO.AsToken(), PackagePath)
 				.Replace
 				(
 					OUTPUT_PACKAGE_TO.AsToken()
@@ -103,6 +103,7 @@
 					OUTPUT_PACKAGE_TO.AsToken()
 					, PackageDir + Path.DirectorySeparatorChar
 				)
+				.Replace(PACKAGE_VERSION.AsToken(), PackageVersion)
 				.Replace(RUNTIME_IDENTIFIER.AsToken(), RuntimeIdentifier)
 				.Replace(VERSION_SUFFIX_DOTNET.AsToken(), VersionSuffixDotNet)
 				.Replace(VERBOSITY_DOTNET.AsToken(), VerbosityDotNet);

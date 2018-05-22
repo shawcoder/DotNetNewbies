@@ -32,6 +32,7 @@
 		public string DefaultDeleteFileName { get; set; }
 		public string PushToDestination { get; set; }
 		public bool UseNuSpecFileIfAvailable { get; set; }
+		public bool DeleteNuSpecFileAfterProcessing { get; set; }
 		public bool InjectDefaultReleaseNotes { get; set; }
 		public string DefaultReleaseNotes { get; set; }
 
@@ -87,6 +88,8 @@
 			aTo.DefaultDeleteFileName = aFrom.DefaultDeleteFileName;
 			aTo.PushToDestination = aFrom.PushToDestination;
 			aTo.UseNuSpecFileIfAvailable = aFrom.UseNuSpecFileIfAvailable;
+			aTo.DeleteNuSpecFileAfterProcessing =
+				aFrom.DeleteNuSpecFileAfterProcessing;
 			aTo.InjectDefaultReleaseNotes = aFrom.InjectDefaultReleaseNotes;
 			aTo.InjectDefaultReleaseNotes = aFrom.InjectDefaultReleaseNotes;
 

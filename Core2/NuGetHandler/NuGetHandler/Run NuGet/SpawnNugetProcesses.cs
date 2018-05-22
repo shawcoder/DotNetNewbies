@@ -96,7 +96,7 @@
 					string vPath =
 						_HandleConfiguration.AppSettingsValues.UseSimulator
 							? Environment.ExpandEnvironmentVariables
-								(_HandleConfiguration.AppSettingsValues.NuGetSimulatorDir).AsDir()
+									(_HandleConfiguration.AppSettingsValues.NuGetSimulatorDir).AsDir()
 							: Environment.ExpandEnvironmentVariables
 									(_HandleConfiguration.AppSettingsValues.NuGetDir).AsDir();
 					vResult =
@@ -105,18 +105,18 @@
 								+ (
 										_HandleConfiguration.AppSettingsValues.UseSimulator
 												? Path.ChangeExtension
-													(_HandleConfiguration.AppSettingsValues.NuGetSimulatorExeName, EXE_EXT)
+														(_HandleConfiguration.AppSettingsValues.NuGetSimulatorExeName, EXE_EXT)
 												: Path.ChangeExtension
 														(_HandleConfiguration.AppSettingsValues.NuGetExeName, EXE_EXT)
 									)
 							, String.Empty
 						);
-					if (!File.Exists(vPath))
+					if (!File.Exists(vResult.Item1))
 					{
 						string vError =
 							_HandleConfiguration.AppSettingsValues.UseSimulator
-								? $"Missing NuGet simulator: {vPath}."
-								: $"Missing NuGet program: {vPath}";
+								? $"Missing NuGet simulator: {vResult.Item1}."
+								: $"Missing NuGet program: {vResult.Item1}";
 						throw new Exception(vError);
 					}
 					break;
@@ -473,7 +473,7 @@
 			return vResult;
 		}
 
-		private string ExtractSummary()
+		private string ExtractNuGetSummary()
 		{
 			string vPath =
 				Path.Combine
@@ -490,7 +490,9 @@
 			{
 				vResult =
 					_HandleConfiguration.AppSettingsValues.RequireSummaryFile
-						? CommandLineSettings.ProjectName
+						? _HandleConfiguration.NuGetNuSpecSettings.ForceSummary
+								? _HandleConfiguration.NuGetNuSpecSettings.Summary
+								: String.Empty
 						: String.Empty;
 			}
 			return vResult;
@@ -518,7 +520,7 @@
 			}
 			string vPath = NuSpecFilePath;
 			StringBuilder vContent = new StringBuilder(File.ReadAllText(vPath));
-			bool vChanged = false;
+			int vChangeCount = 0;
 			string vLookFor;
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceAuthors)
 			{
@@ -530,65 +532,101 @@
 					, NuGetNuSpecKeys.AUTHOR_KEY
 							+ _HandleConfiguration.NuGetNuSpecSettings.Authors
 				);
-				vChanged = true;
+				vChangeCount++;
 			}
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceCopyright)
 			{
 				vLookFor = $"{NuGetNuSpecKeys.COPYRIGHT} {DateTime.Now.Year}";
 				vContent.Replace
-					(vLookFor.AsToken(), _HandleConfiguration.NuGetNuSpecSettings.Copyright);
-				vChanged = true;
+				(
+					vLookFor.AsToken()
+					, _HandleConfiguration.NuGetNuSpecSettings.Copyright
+				);
+				vChangeCount++;
 			}
+			vLookFor = NuGetNuSpecKeys.DESCRIPTION.AsToken();
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceDescription)
 			{
-				vLookFor = NuGetNuSpecKeys.DESCRIPTION.AsToken();
 				vContent.Replace
-					(vLookFor.AsToken(), _HandleConfiguration.NuGetNuSpecSettings.Description);
-				vChanged = true;
+				(
+					vLookFor.AsToken()
+					, _HandleConfiguration.NuGetNuSpecSettings.Description
+				);
+				vChangeCount++;
 			}
-			vLookFor = NuGetNuSpecKeys.ICON_URL_KEY + NuGetNuSpecKeys.DELETE_THIS;
+			else
+			{
+				string vFind =
+					NuGetNuSpecKeys.DESCRIPTION_KEY_START
+					+ NuGetNuSpecKeys.DEFAULT_DESCRIPTION
+					+ NuGetNuSpecKeys.DESCRIPTION_KEY_END
+					+ "\r\n";
+				string vReplaceWith =
+					NuGetNuSpecKeys.DESCRIPTION_KEY_START
+					+ NuGetNuSpecKeys.DEFAULT_DESCRIPTION
+					+ DateTime.Now.ToLongDateString()
+					+ NuGetNuSpecKeys.DESCRIPTION_KEY_END
+					+ "\r\n";
+				vContent.Replace(vFind, vReplaceWith);
+				vChangeCount++;
+			}
+			vLookFor =
+				NuGetNuSpecKeys.ICON_URL_KEY + NuGetNuSpecKeys.ICON_URL_OR_DELETE_THIS;
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceIconUrl)
 			{
-				vContent.Replace(vLookFor, _HandleConfiguration.NuGetNuSpecSettings.IconUrl);
-				vChanged = true;
+				vContent.Replace
+					(vLookFor, _HandleConfiguration.NuGetNuSpecSettings.IconUrl);
+				vChangeCount++;
 			}
 			else
 			{
 				string vFind =
 					NuGetNuSpecKeys.ICON_URL_KEY
-						+ NuGetNuSpecKeys.DELETE_THIS
-						+ NuGetNuSpecKeys.ICON_URL_KEY_END;
+						+ NuGetNuSpecKeys.ICON_URL_OR_DELETE_THIS
+						+ NuGetNuSpecKeys.ICON_URL_KEY_END
+					+ "\r\n";
 				vContent.Replace(vFind, String.Empty);
+				vChangeCount++;
 			}
 			vLookFor = NuGetNuSpecKeys.LICENSE_URL;
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceLicenseUrl)
 			{
 				vContent.Replace
-					(vLookFor.AsToken(), _HandleConfiguration.NuGetNuSpecSettings.LicenseUrl);
-				vChanged = true;
+				(
+					vLookFor.AsToken(),
+					_HandleConfiguration.NuGetNuSpecSettings.LicenseUrl
+				);
+				vChangeCount++;
 			}
 			else
 			{
 				string vFind =
 					NuGetNuSpecKeys.LICENSE_URL_KEY
-					+ NuGetNuSpecKeys.DELETE_THIS
-					+ NuGetNuSpecKeys.LICENSE_URL_KEY_END;
+					+ NuGetNuSpecKeys.LICENSE_URL_OR_DELETE_THIS
+					+ NuGetNuSpecKeys.LICENSE_URL_KEY_END
+					+ "\r\n";
 				vContent.Replace(vFind, String.Empty);
+				vChangeCount++;
 			}
 			vLookFor = NuGetNuSpecKeys.PROJECT_URL;
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceProjectUrl)
 			{
 				vContent.Replace
-					(vLookFor.AsToken(), _HandleConfiguration.NuGetNuSpecSettings.ProjectUrl);
-				vChanged = true;
+				(
+					vLookFor.AsToken(),
+					_HandleConfiguration.NuGetNuSpecSettings.ProjectUrl
+				);
+				vChangeCount++;
 			}
 			else
 			{
 				string vFind =
 					NuGetNuSpecKeys.PROJECT_URL_KEY
-					+ NuGetNuSpecKeys.DELETE_THIS
-					+ NuGetNuSpecKeys.PROJECT_URL_KEY_END;
+					+ NuGetNuSpecKeys.PROJECT_URL_OR_DELETE_THIS
+					+ NuGetNuSpecKeys.PROJECT_URL_KEY_END
+					+ "\r\n";
 				vContent.Replace(vFind, String.Empty);
+				vChangeCount++;
 			}
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceOwners)
 			{
@@ -600,16 +638,26 @@
 					, NuGetNuSpecKeys.OWNER_KEY
 							+ _HandleConfiguration.NuGetNuSpecSettings.Owners
 				);
-				vChanged = true;
+				vChangeCount++;
 			}
+			vLookFor = NuGetNuSpecKeys.DEFAULT_RELEASE_NOTES;
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceReleaseNotes)
 			{
-				vLookFor = NuGetNuSpecKeys.DEFAULT_RELEASE_NOTES;
 				if (_HandleConfiguration.AppSettingsValues.RequireReleaseNotesFile)
 				{
 					vContent.Replace(vLookFor, ExtractReleaseNotes());
-					vChanged = true;
+					vChangeCount++;
 				}
+			}
+			else
+			{
+				string vFind =
+					NuGetNuSpecKeys.RELEASE_NOTES_KEY
+					+ NuGetNuSpecKeys.DEFAULT_RELEASE_NOTES
+					+ NuGetNuSpecKeys.RELEASE_NOTES_KEY_END
+					+ "\r\n";
+				vContent.Replace(vFind, String.Empty);
+				vChangeCount++;
 			}
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceRequireLicenseAcceptance)
 			{
@@ -617,10 +665,13 @@
 					NuGetNuSpecKeys.REQUIRE_LICENSE_ACCEPTANCE_KEY
 						+ NuGetNuSpecKeys.DEFAULT_REQUIRE_LICENSE_ACCEPTANCE;
 				vContent.Replace
-					(vLookFor, _HandleConfiguration.NuGetNuSpecSettings.RequireLicenseAcceptance);
-				vChanged = true;
+				(
+					vLookFor,
+					_HandleConfiguration.NuGetNuSpecSettings.RequireLicenseAcceptance
+				);
+				vChangeCount++;
 			}
-			if (_HandleConfiguration.NuGetNuSpecSettings.ForceSummary)
+			if (_HandleConfiguration.AppSettingsValues.RequireSummaryFile)
 			{
 				vLookFor = NuGetNuSpecKeys.SUMMARY_KEY;
 				string vContentAsString = vContent.ToString();
@@ -631,9 +682,10 @@
 						(NuGetNuSpecKeys.METADATA_END, COMPARISON);
 					string vNewKey =
 						NuGetNuSpecKeys.SUMMARY_KEY
-							+ ExtractSummary()
+							+ ExtractNuGetSummary()
 							+ NuGetNuSpecKeys.SUMMARY_KEY_END;
 					vContent.Insert(vIndex, vNewKey);
+					vChangeCount++;
 				}
 				else
 				{
@@ -645,24 +697,43 @@
 					vIndex = vIndex + NuGetNuSpecKeys.SUMMARY_KEY.Length;
 					int vHowMuch = vEndIndex - vIndex + 1;
 					vContentAsString = vContentAsString.Remove(vIndex, vHowMuch);
-					vContentAsString = vContentAsString.Insert(vIndex, ExtractSummary());
+					vContentAsString = vContentAsString.Insert(vIndex, ExtractNuGetSummary());
 					vContent.Clear();
 					vContent.Append(vContentAsString);
+					vChangeCount++;
 				}
 			}
+			vLookFor = NuGetNuSpecKeys.DEFAULT_TAGS;
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceTags)
 			{
-				vLookFor = NuGetNuSpecKeys.DEFAULT_TAGS;
 				vContent.Replace(vLookFor, _HandleConfiguration.NuGetNuSpecSettings.Tags);
-				vChanged = true;
+				vChangeCount++;
+			}
+			else
+			{
+				string vFind =
+					NuGetNuSpecKeys.TAGS_KEY_START
+					+ NuGetNuSpecKeys.DEFAULT_TAGS
+					+ NuGetNuSpecKeys.TAGS_KEY_END
+					+ "\r\n";
+				vContent.Replace(vFind, String.Empty);
+				vChangeCount++;
 			}
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceTitle)
 			{
 				vLookFor = NuGetNuSpecKeys.TITLE.AsToken();
-				vContent.Replace(vLookFor, _HandleConfiguration.NuGetNuSpecSettings.Title);
-				vChanged = true;
+				vContent.Replace
+					(vLookFor, _HandleConfiguration.NuGetNuSpecSettings.Title);
+				vChangeCount++;
 			}
-			if (vChanged)
+			if (_HandleConfiguration.AppSettingsValues.ForceVersionOverride)
+			{
+				vLookFor = DotNetCSProjKeys.VERSION;
+				vContent.Replace
+					(vLookFor, _HandleConfiguration.AppSettingsValues.VersionOverride);
+				vChangeCount++;
+			}
+			if (vChangeCount > 0)
 			{
 				File.WriteAllText(vPath, vContent.ToString());
 			}
@@ -737,7 +808,7 @@
 		//	{
 		//		bool vTest =
 		//			(vElement != null)
-		//				&& vElement.Value.Equals(NuGetNuSpecKeys.DELETE_THIS, vComparison);
+		//				&& vElement.Value.Equals(NuGetNuSpecKeys.LICENSE_URL_OR_DELETE_THIS, vComparison);
 		//		if (vTest)
 		//		{
 		//			vElement.Remove();
@@ -759,7 +830,7 @@
 		//	{
 		//		bool vTest =
 		//			(vElement != null)
-		//				&& vElement.Value.Equals(NuGetNuSpecKeys.DELETE_THIS, vComparison);
+		//				&& vElement.Value.Equals(NuGetNuSpecKeys.LICENSE_URL_OR_DELETE_THIS, vComparison);
 		//		if (vTest)
 		//		{
 		//			vElement.Remove();
@@ -781,7 +852,7 @@
 		//	{
 		//		bool vTest =
 		//			(vElement != null)
-		//				&& vElement.Value.Equals(NuGetNuSpecKeys.DELETE_THIS, vComparison);
+		//				&& vElement.Value.Equals(NuGetNuSpecKeys.LICENSE_URL_OR_DELETE_THIS, vComparison);
 		//		if (vTest)
 		//		{
 		//			vElement.Remove();
@@ -833,7 +904,7 @@
 		//		vElement = FindElement(vDoc, vLookFor);
 		//		if (_HandleConfiguration.AppSettingsValues.RequireSummaryFile)
 		//		{
-		//			_HandleConfiguration.NuGetNuSpecSettings.Summary = ExtractSummary();
+		//			_HandleConfiguration.NuGetNuSpecSettings.Summary = ExtractNuGetSummary();
 		//			ProcessElement
 		//			(
 		//				vParent
@@ -867,11 +938,48 @@
 		//			, _HandleConfiguration.NuGetNuSpecSettings.Title
 		//		);
 		//	}
+		//	if (_HandleConfiguration.AppSettingsValues.ForceVersionOverride)
+		//	{
+		//		vLookFor = DotNetCSProjKeys.VERSION;
+		//		vElement = _XDoc.FindElement(vLookFor);
+		//		ProcessElement
+		//		(
+		//			vParent
+		//			, vElement
+		//			, DotNetCSProjKeys.VERSION
+		//			,	_HandleConfiguration.AppSettingsValues.VersionOverride
+		//		);
+		//	}
 		//	if (vChanged)
 		//	{
 		//		vDoc.Save(vPath);
 		//	}
 		//}
+
+		private string ExtractDotNetSummary()
+		{
+			string vPath =
+				Path.Combine
+				(
+					ProjectDir
+					, SUMMARY_FILE_NAME + TXT_EXT
+				);
+			string vResult;
+			if (File.Exists(vPath))
+			{
+				vResult = File.ReadAllText(vPath);
+			}
+			else
+			{
+				vResult =
+					_HandleConfiguration.AppSettingsValues.RequireSummaryFile
+						? _HandleConfiguration.DotNetNuSpecSettings.ForceProduct
+								? _HandleConfiguration.DotNetNuSpecSettings.Product
+								: String.Empty
+						: String.Empty;
+			}
+			return vResult;
+		}
 
 		private void ProcessTheStandardProjectFileForPack()
 		{
@@ -1036,7 +1144,7 @@
 					, _HandleConfiguration.DotNetNuSpecSettings.PackageTags
 				);
 			}
-			if (_HandleConfiguration.DotNetNuSpecSettings.ForceProduct)
+			if (_HandleConfiguration.AppSettingsValues.RequireSummaryFile)
 			{
 				vLookFor = DotNetCSProjKeys.PRODUCT;
 				vElement = _XDoc.FindElement(vLookFor);
@@ -1045,10 +1153,10 @@
 					vParent
 					, vElement
 					, DotNetCSProjKeys.PRODUCT
-					, _HandleConfiguration.DotNetNuSpecSettings.Product
+					, ExtractDotNetSummary()
 				);
 			}
-			if (_HandleConfiguration.DotNetNuSpecSettings.ForceVersion)
+			if (_HandleConfiguration.AppSettingsValues.ForceVersionOverride)
 			{
 				vLookFor = DotNetCSProjKeys.VERSION;
 				vElement = _XDoc.FindElement(vLookFor);
@@ -1057,9 +1165,36 @@
 					vParent
 					, vElement
 					, DotNetCSProjKeys.VERSION
-					, _HandleConfiguration.DotNetNuSpecSettings.Version
+					, _HandleConfiguration.AppSettingsValues.VersionOverride
 				);
 			}
+			else
+			{
+				if (_HandleConfiguration.DotNetNuSpecSettings.ForceVersion)
+				{
+					vLookFor = DotNetCSProjKeys.VERSION;
+					vElement = _XDoc.FindElement(vLookFor);
+					ProcessElement
+					(
+						vParent
+						, vElement
+						, DotNetCSProjKeys.VERSION
+						, _HandleConfiguration.DotNetNuSpecSettings.Version
+					);
+				}
+			}
+			//if (_HandleConfiguration.DotNetNuSpecSettings.ForceVersion)
+			//{
+			//	vLookFor = DotNetCSProjKeys.VERSION;
+			//	vElement = _XDoc.FindElement(vLookFor);
+			//	ProcessElement
+			//	(
+			//		vParent
+			//		, vElement
+			//		, DotNetCSProjKeys.VERSION
+			//		, _HandleConfiguration.DotNetNuSpecSettings.Version
+			//	);
+			//}
 			if (vChanged)
 			{
 				_XDoc.Save(vPath);
@@ -1125,7 +1260,7 @@
 				catch (Exception)
 				{
 					ErrorContainer.Errors.Add($"Command: {vInfo.FileName}");
-					ErrorContainer.Errors.Add($"ARguments: {vInfo.Arguments}");
+					ErrorContainer.Errors.Add($"Arguments: {vInfo.Arguments}");
 					throw;
 				}
 			}
@@ -1186,6 +1321,7 @@
 				}
 				case DotNetFramework.Core:
 				{
+					ProcessTheCoreProjectFileForPack();
 					vContinue = _CommandsToExecute.ContainsKey(DotNetCommands.PACK);
 					if (vContinue)
 					{
@@ -1208,6 +1344,7 @@
 				}
 				case DotNetFramework.Standard:
 				{
+					ProcessTheStandardProjectFileForPack();
 					vContinue = _CommandsToExecute.ContainsKey(DotNetCommands.PACK);
 					if (vContinue)
 					{
@@ -1238,6 +1375,7 @@
 						vContinue =
 							SpawnAProcess(vCommand, vCommandLine, NuGetCommand.NuGetSpec);
 					}
+					ProcessFullFrameworkNuSpecFileForPack();
 					vContinue =
 						vContinue && _CommandsToExecute.ContainsKey(NuGetCommands.PACK);
 					if (vContinue)
@@ -1256,14 +1394,23 @@
 						vContinue =
 							SpawnAProcess(vCommand, vCommandLine, NuGetCommand.NuGetPush);
 					}
-					vContinue =
-						vContinue && _CommandsToExecute.ContainsKey(NuGetCommands.ADD);
-					if (vContinue)
+					else
 					{
-						vCommand = _CommandsToExecute[NuGetCommands.ADD].Item1;
-						vCommandLine = _CommandsToExecute[NuGetCommands.ADD].Item2;
-						vContinue =
-							SpawnAProcess(vCommand, vCommandLine, NuGetCommand.NuGetAdd);
+						vContinue = _CommandsToExecute.ContainsKey(NuGetCommands.ADD);
+						if (vContinue)
+						{
+							vCommand = _CommandsToExecute[NuGetCommands.ADD].Item1;
+							vCommandLine = _CommandsToExecute[NuGetCommands.ADD].Item2;
+							vContinue =
+								SpawnAProcess(vCommand, vCommandLine, NuGetCommand.NuGetAdd);
+						}
+					}
+					if (_HandleConfiguration.AppSettingsValues.DeleteNuSpecFileAfterProcessing)
+					{
+						if (File.Exists(NuSpecFilePath))
+						{
+							File.Delete(NuSpecFilePath);
+						}
 					}
 					break;
 				}
@@ -1360,7 +1507,6 @@
 				}
 				case DotNetFramework.Core:
 				{
-					ProcessTheCoreProjectFileForPack();
 					foreach (NuGetRepository vRepository in vList)
 					{
 						UpdateTokenSet(vRepository);
@@ -1372,7 +1518,6 @@
 				}
 				case DotNetFramework.Standard:
 				{
-					ProcessTheStandardProjectFileForPack();
 					foreach (NuGetRepository vRepository in vList)
 					{
 						UpdateTokenSet(vRepository);
@@ -1384,7 +1529,6 @@
 				}
 				case DotNetFramework.Full:
 				{
-					ProcessFullFrameworkNuSpecFileForPack();
 					foreach (NuGetRepository vRepository in vList)
 					{
 						UpdateTokenSet(vRepository);

@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DotNetFrameworkClassLibrary</RootNamespace>
     <AssemblyName>DotNetFrameworkClassLibrary</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,8 +49,8 @@
   <PropertyGroup>
     <PostBuildEvent>@echo off
 IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE
-REM ECHO dotnet "%25APPDATA%25\NuGet\win10-x64\NuGetHandler.dll" --T="$(TargetPath)" --S="$(SolutionPath)" --P="$(ProjectPath)" --C=$(ConfigurationName) --V=detailed --N --E &gt; CommandLine.txt
-dotnet "%25APPDATA%25\NuGet\win10-x64\NuGetHandler.dll" --T="$(TargetPath)" --S="$(SolutionPath)" --P="$(ProjectPath)" --C=$(ConfigurationName) --V=detailed  --E
+REM ECHO dotnet "%25APPDATA%25\NuGet\win10-x64\NuGetHandler.dll" -t "$(TargetPath)" -s "$(SolutionPath)" -p "$(ProjectPath)" -c $(ConfigurationName) -v detailed
+dotnet "%25APPDATA%25\NuGet\win10-x64\NuGetHandler.dll" -t "$(TargetPath)" -s "$(SolutionPath)" -p "$(ProjectPath)" -c $(ConfigurationName) -v detailed
 :NOT_RELEASE
 :END</PostBuildEvent>
   </PropertyGroup>

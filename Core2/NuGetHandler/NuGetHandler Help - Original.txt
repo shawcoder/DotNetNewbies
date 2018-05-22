@@ -1,0 +1,761 @@
+NuGetHandler Help
+Summary:
+
+NuGetHandler is a program designed to make the developers job easier when 
+dealing with NuGet. The idea is to provide a mechanism that can be both
+standardized and automated with regards to publishing NuGet packages.
+
+Packages, as created for Visual Studio, are handled by two different commands:
+
+  - NugGet.exe for Full Framework packages
+  - DotNet nuget for Standard/Core packages
+
+There are some provisions for handling package publication when developing with
+Standard and Core, there is no equivalent for Full Framework and even those
+that are for Standard/Core are not well documented.
+
+This program solves that issue by supplying a standard methodology for
+publishing NuGet packages regardless of the environment that is targeted by the
+package itself e.g. Full Framework by simply calling on the mechanism provided
+by Microsoft to perform the actual work. This program simply facilitates the
+activity by leveraging the resources already provided by Visual Studio and the
+availability of the Post-Build event handler for each project.
+  
+NuGetHandler can cause the generation and publication of a package and cause
+that package to be published to multiple targets with a single call.
+
+********************************************************************************
+********************************************************************************
+
+Help on Help:
+
+The command syntax for requesting additional help with NuGetHandler is:
+
+  NuGetHandler -h <subject>
+
+where <subject> is the desired section of help to be acquired. Given that the
+length of some of the subject matter is quite long, it is recommended that the
+output of the help system be piped to a text file for later review.
+
+The list of subjects follows:
+
+                                all
+                                appconfigsettings
+                                appconfignuspecdotnet
+                                appconfignuspecnuget
+                                conmmandsequence
+                                conmmandsequencedotnet
+                                conmmandsequencedotnetstandard
+                                conmmandsequencenuget
+                                command-line
+                                config-info
+                                environment
+                                help
+                                nugetpush
+                                nugetpushrepos
+                                nugetpushpushdestinations
+                                setup
+                                switches
+                                summary
+                                tokens
+
+<none>                      The program introduction plus this help description.
+
+all:                        Generate the entire help content (best redirected to
+                            a file for further perusal).
+
+app-config-settings:        Just the information as found in the appSettings
+                            portion of the app.config file and its possible
+                            app.optional.config files.
+
+app-config-nuspec-dotnet:   Just the information as found in the
+                            DotNetNuSpecSettings section of the app.config file
+                            and its possible app.optional.config files.
+
+app-config-nuspec-nuget:    Just the information as found in the 
+                            NuGetNuSpecSettings section of the app.config file
+                            and its possible app.optional.config files.
+
+command-line:               Help on the command line switches and named value
+                            pairs plus the command line introduction.
+
+command-line-switches:      Help on just the command line switches.
+
+command-line-named-values:  Help on just the command line named values.
+
+command-sequence:           Complete list of commands and their respective
+                            command line parameters as supported in
+                            NuGetHandler.
+
+command-sequence-core:      Just the command sequence that supports .net Core
+                            projects (dotnet.exe).
+
+command-sequence-nuget:     Just the command sequence that supports full
+                            framework projects (nuget.exe).
+
+command-sequence-standard:  Just the comnmand sequence that supports .net
+                            standard projects (dotnet.exe).
+
+config-info:                Display the settings for the final app.config,
+                            command line calculated values and other information
+                            as determined by the program when executed. If a 
+                            project was designated, the processed project 
+                            information will be displayed.
+
+environment:                Help and content for the program environment.
+
+help:                       This help description.
+
+nuget-push:                 The combined information concerning the locations
+                            (Push Repositories) of the various nuget servers
+                            and the corresponding destinations (Push 
+                            Destinations) that match the repositories.
+
+nuget-push-repos:           Just the information on the nuget server
+                            repositories.
+
+nuget-push-destinations:    Just the information on the nuget server repository
+                            destinations.                                                        
+
+setup:                      How to prepare and install the NuGetHandler program.
+
+summary:                    Just the summary information for the NuGetHandler
+                            program.
+
+tokens:                     Help on the replaceable tokens as found in the 
+                            app.config file.
+
+********************************************************************************
+********************************************************************************
+
+Setup:
+
+Setting up the NuGetHandler is simplicity itself if the program is generated
+from the original source using Visual Studio. The Post-Build event contans
+instructions to copy the generated program and appropriate ancillary files to 
+the desired location (the same location is the NuGet.exe program) upon 
+successful compilation of the source in Release mode.
+
+However, there are a few items that need to be taken care of prior to compiling
+this program. They are:
+
+- Fetch the NuGet.exe program from Microsoft. As of this writing, the executable
+  can be downloaded from the following link:  
+
+    https://www.nuget.org/downloads
+
+Now, create a directory in the %APPDATA% directory for the NuGet.exe program 
+called "NuGet" (no quotes, of course). This is the default location presumed by 
+the NuGetHandler program for the location of the NuGet.exe program.
+
+Copy the downloaded version of NuGet.exe to the aforementioned directory, open
+a command prompt and execute the NuGet.exe program with no parameters. This has
+the effect of creating the default NuGet.config file which makes NuGet happy.
+
+The NuGetHandler program does not use the NuGet.config file but the authors of
+the NuGet.exe program recomend that it exist for NuGet.exe to use.
+
+- In the %APPDATA%\NuGet directory, create an additional directory, "win10-x64".
+  This is the default installation directory for the NuGetHandler program 
+  itself.
+  If allowed to execute, the Post-Build event of the NuGetHandler program, upon
+  successful compilation in Release mode of the program, will copy the result
+  to this location. One need not add the path to the Environment as the call to
+  the NuGetHandler program itself is fully specified in the call sequence for 
+  each project. The full specification for the command sequence for a 
+  NuGet-eligible project follows:
+
+@echo off
+IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE
+dotnet "%APPDATA%\NuGet\win10-x64\NuGetHandler.dll" -T "$(TargetPath)" -S "$(SolutionPath)" -P "$(ProjectPath)" -C $(ConfigurationName) -V quiet
+:NOT_RELEASE
+:END
+
+Place the above script, verbatim, into the Post-Build event of each project to 
+be made NuGetHandler eligible and the command will take care of the rest. And
+yes, the quotes in the above script ARE required.
+
+As can be seen by the call itself, there is no need to clutter up the 
+Environment path with extraneous information. The .NET Core framework is
+presumed to have already been installed thus the call to "dotnet.exe" will be
+valid.
+
+Obviously, other switches can be added as desired, but the above is the minimum
+necessary to make a project NuGetHandler-eligible.
+
+********************************************************************************
+********************************************************************************
+
+Command line:
+
+Command line values come in three types:
+
+  1.  Switches: Switches are command line values which are preceded by
+                either a double dash (--) or a slash (/).
+
+      Switches are defined as indicators which are either present or
+      not present on the command line. If present, then the stronly-typed
+      container value whose name matches the switch name will be set to
+      true, indicating that the switch was found as part of the command line.
+        
+        --NoOp
+
+        - or its variant -
+
+        --N
+
+      SWITCHES ARE CASE-**IN**-SENSITIVE!
+
+  2.  Named Values: Named values are command line values which come in
+                    pairs. First the owning name of the named value,
+                    which is preceded by a SINGLE dash (-), followed by
+                    the "value" portion fo the named value pair, separated by
+                    a space.
+
+        -ProjectPath "C:\Some\Project\Path\File"
+
+      Note that values that contain a space *MUST* be enclosed in double quotes.
+
+  3.  Values. Values are POSITION DEPENDENT arguments whose postion in
+      the command line argument string determines their function within
+      the application e.g. If the value "C:\Dir" is in position 1, it
+      may tell the program where to look for a config file, if in
+      position 2, it might tell where to find a source file, if it follows a
+      named value indicator, then it's the value to be assigned to the named
+      value.
+
+********************************************************************************
+********************************************************************************
+
+Switches:
+
+--D:  DeleteFromNuGet. This switch tells NuGetHandler to engage the deletion
+      function in that the file in the PackageHomeDir named (by default, the
+      user can change this) DeleteFromNuGet.del will be opened, scanned and
+      each entry applied as a request to delete the package from the requisite
+      NuGet server.
+
+--E:  ShowEnvironment. If included, this switch will cause the NuGetHandler
+      program to show the content of the command line, various final values
+      as brought in from the various app.*.config files, etc. Normally used
+      for debugging.
+
+--M:  MergeDeletions. As each package is successfully pushed to a NuGet server,
+      the program creates a .del file which contains the package name, version,
+      location sent to, etc. If the user wishes to clean up one or more
+      NuGet servers, then this command must be executed prior to calling 
+      NuGetHandler with the aforementioned "D" switch. The function of this
+      switch is to cause NuGetHandler to open all of the .del files, scan the
+      content and append it to the DeleteFromNuGet.del file. This file can then
+      be edited, by the user in any text editor, to select which of the desired
+      package instances should be deleted. If an entry is deleted from the 
+      DeleteFromNuGet.del file prior to execution, that file will not be
+      deleted nor will the package be removed from the NuGet server. The format
+      of the .del file name is <some GUID>.del. The GUID portion of the name
+      will be included in the DeleteFromNuGet.del file so that when the package
+      is successfully deleted from the NuGet server, the corresponding .del 
+      file will also be deleted.
+
+--N: NoOp. Basically, tell the NuGetHandler to not do anything.
+
+--Q:  NoSpawn. Tell NuGetHandler to process the entire project file as if it
+      were going to pack/push, etc. the designated project but to not actually
+      process the project. Mainly used for debugging.
+
+--C:  ConfigurationName e.g. Release | Debug | etc.
+
+--W:  Wait (Show a message at execution conclusion and wait for a keypress).
+
+********************************************************************************
+********************************************************************************
+
+Command Line Named Values
+
+-P:  ProjectPath. The full path to the project including the project name and
+    extension.
+
+-H:  Show Help. This must be followed by a help topic. If none is supplied then
+    the help on help section will be displayed.
+
+-S:  SolutionPath. Full path to the solution including the solution name and
+    extension.
+
+-T:  TargetPath. Full path to the destination. This is normally a directory set
+    up in the %APPDATA%\NuGet directory (at least, that's the default) that
+    will contain the output NuGet packages. The packages themselves are
+    separated into their respective solution directories, each of which contains
+    the project package which, in turn, is stored in a sub-directory of the
+    package name as a version. e.g.
+
+    %APPDATA%\NuGet\PackageHome\<solution>\<project>\<version>
+
+-V:  Verbosity. Allowed verbosity values: quiet, normal, detailed.
+
+-U:  PushToDestination. The name of the repository set to push to. This value,
+    if used, will override ALL values provided in the various app.*.config
+    files.
+
+********************************************************************************
+********************************************************************************
+
+App.config content
+
+********************************************************************************
+********************************************************************************
+
+appSettings
+
+<add key=""SuspendHandling"" value=""false""/>
+
+- When set to ""true"" causes the program to do nothing. It starts, reads the 
+  config file, notices this setting as set to ""true"" and quits.
+
+<add key=""PushToDestination"" value=""HomeNew""/>
+
+- What set of NuGet servers (repositories) the package will be uploaded to
+  (see below for an explanation of named repositories).
+
+<add key=""AllowOptionalAppConfig"" value=""true""/>
+
+- If set to ""true"", then the app.config as found in the NuGetHandler home
+  directory is only the first of a possible series of app.config files that
+  will be processed when the program first starts. 
+  
+  The initial App.config file will be processed and stored, then, if this 
+  setting is ""true"", the next location searched will be the solution directory.
+  The file sought is named App.optional.config and will be loaded next and its
+  values applied to those already stored from the initial App.config load. If
+  a third app.optional.config file is found in the project directory, it, too,
+  will be loaded and its values applied to the current configuration.
+  
+  This allows the system to have a ""general"" configuration, one tailored to a
+  solution and finally a configuration tailored to a particuolar project.
+
+  It used to be possible to game the system in Full Framework by breaking the
+  AssemblyInfo.cs file into two pieces - those that are common to all projects
+  and those that are particular to a specific project. The nice part is that 
+  things like ""Version"" could be brought into the ""common"" section and entire
+  solutions or even multiple solutions all given the same version number by
+  adding the comnmon AssemblyInfo.cs file via a link vs adding a copy of the
+  file to the project. With the advent of Standard/Core, this is no longer
+  possible as the entire AssemblyInfo.cs file is now missing and its content
+  handled as a section within the .csproj file.
+
+  To overcome this limitation, the user may opt to use the following two
+  configuration override commands to alter the configuration of NuGetHandler.
+
+<add key=""UseConfigOverride"" value=""true""/>
+
+- If set to ""true"", then an alternate app.optional.config file located in a
+  specified location will be used in place of the tiered app.optional.config
+  setting set as described elsewhere.
+
+<add key=""ConfigOverrideDir"" value=""""/>
+
+- If UseConfigOverride is set to ""true"", then the location of the 
+  app.optional.config file to be used will be in the director specified by this
+  key. The value should be in the form of an actual directory, meaning that the
+  value should end in a trailing path delimiter character.
+
+<add key=""ForceVersionOverride"" value=""true""/>
+
+- If set to ""true"", then the version that is found in the AssemblyInfo.cs
+  file (Full Framework) or the version that is found in the .csproj file for
+  Standard/Core will be overridden with the value specifed.
+
+  It should be noted that if this value is set to ""true"" it also overrides any
+  value found in the respective ""XXXNuSpec"" values sections as outlined 
+  elsewhere.
+  Each type of project can have its own version override if desired, however, if
+  this value is set to ""true"", then it overrides the overrides. IOW, this value
+  wins regardless of .NET environment.
+
+<add key=""VersionOverride"" value=""9.8.7.6""/>
+
+- If ForceVersionOverride is set to ""true"", then use this value as the version
+  vice what is found in the respective project or the sections defined 
+  elsewhere.
+
+<add key=""NuGetDir"" value=""%APPDATA%\NuGet\""/>
+
+- Location directory of the ""NuGet.exe"" program. Notice that the directory
+  entry ENDS WITH A PATH DELIMITER! This is REQUIRED.
+
+<add key=""NuGetExeName"" value=""NuGet""/>
+
+- Name of the NuGet.exe program. Notice that the name DOES NOT end with "".exe"".
+
+<add key=""DotNetDir"" value=""%PROGRAMFILES%\dotnet""/>
+
+-  The location directory of the ""dotnet.exe"" program. Notice that the directory
+  entry ENDS WITH A PATH DELIMITER! This is REQUIRED.
+
+<add key=""DotNetName"" value=""dotnet""/>
+
+-  Name of the ""dotnet.exe"" program. Notice that the name DOES NOT end with 
+  "".exe"".
+
+<add key=""DotNetVerb"" value=""nuget""/>
+
+- The ""dotnet.exe"" program is goofy when it comes to NuGet handling. The 
+  ""dotnet"" program uses ""pack"" directly e.g. dotnet pack ... whereas to ""push""
+  or ""delete"", the program uses the ""nuget"" verb e.g. ""dotnet nuget push ..."".
+  Therefore, this verb is used to add to the command line where appropriate.
+  See below for command line definitions and this will become clearer.
+  
+<add key=""UseSimulator"" value=""false""/>
+
+- Instead of actually calling the NuGet.exe or dotnet.exe program, call a
+  simulator instead. The solution for this application contains a simulator
+  for both NuGet.exe (a Full Framework console application) and a dotnet
+  simulator for dotnet.exe. If this value is et to ""true"", then those
+  simulators will be invoked instead of the actual programs.
+
+<add key=""DotNetSimulatorDir"" value=""%APPDATA%\NuGet\NuGetSimulator\""/>
+
+- The directory in which the dotnet.exe simulator lives.
+
+<add key=""DotNetSimulatorExeName"" value=""NuGetSimulator.dll""/>
+- The name of the dotnet.exe simulator.
+
+<add key=""NuGetSimulatorDir"" value=""%APPDATA%\NuGet\NuGetSimulatorFF\""/>
+
+- The directory of the NuGet.exe simulator.
+
+<add key=""NuGetSimulatorExeName"" value=""NuGetSimulator""/>
+
+- The name of the NuGet.exe simulator.
+
+<add key=""DefaultVerbosity"" value=""quiet""/>
+
+- Level of verbosity exhibited by this program. Valid values are quiet, 
+  normal and detailed.
+
+<add key=""PackageHomeDir"" value=""%APPDATA%\NuGet\PackageHome\""/>
+
+- Once generated, the location in which the resultant package is stored.
+
+<add key=""RequireReleaseNotesFile"" value=""false""/>
+
+- If set to ""true"", then a Release Notes file containing text concerning
+  the release of the particular version of the package will be a required
+  item. The ReleaseNotes.txt file (or whatever the chosen name is) should be
+  located in the same directory as the project file.
+
+<add key=""ReleaseNotesFileName"" value=""ReleaseNotes.txt""/>
+
+- Name of the release notes file.
+
+<add key=""InjectDefaultReleaseNotes"" value=""true""/>
+
+- If no release notes are found for a particular build, then insert a standard
+  release note if this value is set to ""true"".
+
+<add key=""DefaultReleaseNotes"" value=""No Custom Release Notes for""/>
+
+- The value to be inserted if InjectDefaultReleaseNotes is set to ""true"".
+
+<add key=""RequireSummaryFile"" value=""false""/>
+
+- Similiar to ReleaseNotes, the NuGet.exe program allows the inclusion of
+  a package summary statement. If this value is set to ""true"", then a text
+  file with the package summary will be required.
+
+<add key=""SummaryFileName"" value=""Summary.txt""/>
+
+- The name of the summary file to use.
+
+<!--The DefaultDeleteFileName file will be stored in the PackageHomeDir-->
+<add key=""DefaultDeleteFileName"" value=""DeleteFromNuGet.del""/>
+
+- The name of the Delete file. See the --D flag concerning deletions for further
+  information.
+
+<add key=""UseNuSpecFileIfAvailable"" value=""true""/>
+
+- NuGet.exe will create a .nuspec file on demand that extracts the various
+  values as found in the AssemblyInfo.cs file and places them in an external
+  .nuspec file on demand. This file can then be used by NuGet.exe to create
+  the desired package. If this value is set to ""true"", it is presumed that
+  a Nuget spec command will be issued (this program assumes that one will be 
+  used and acts accordingly).
+
+<!--Replaceable Token Values-->
+
+- See the various command line parameter definitions for NuGet.exe and 
+  dotnet.exe for the meaning and use of the following values:
+
+  The command line definitions follow in the app.config file and allow
+  replaceable tokens whose value is assigned here to be placed on the specified
+  command line and later replaced with the value assigned here when the 
+  particular command is invoked.
+
+  Each token is in the form of $<token name>$ where <token name> is one of the
+  following tokens e.g. ConfigFile => $ConfigFile$.
+
+<add key=""BasePath"" value=""""/>
+<add key=""ConfigFile"" value=""""/>
+<add key=""VerbosityDotNet"" value=""minimal""/>
+<add key=""VersionSuffixDotNet"" value=""""/>
+<add key=""Exclude"" value=""""/>
+<add key=""MinBuildVersion"" value=""""/>
+<add key=""MinClientVersion"" value=""""/>
+<add key=""MSBuildPath"" value=""""/>
+<add key=""MSBuildVersion"" value=""""/>
+<add key=""VerbosityNuGet"" value=""normal""/>
+<add key=""VersionSuffixNuGet"" value=""""/>
+<add key=""Properties"" value=""""/>
+<add key=""Root"" value=""""/>
+<add key=""RuntimeIdentifier"" value=""""/>
+<add key=""Timeout"" value=""""/>
+
+********************************************************************************
+
+NuGet NuSpec settings
+
+- If one examines the content of the generated .nuspec file by executing
+  NuGet spec in the same directory as the targeted project, one will discover
+  that a .nuspec file has been created. This file will contain replacable tokens
+  whose assigned values may be assigned here. 
+
+  Note that "Id" and "Version" are handled elsewhere. The "Id" value is left 
+  as-is, "Version" is handled by the "ForceVersionOverride" and 
+  "VersionOverride" values as found in the app settings section.
+
+  The following represents a typical .nuspec file just after creation:
+
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>
+    <projectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</projectUrl>
+    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>Tag1 Tag2</tags>
+  </metadata>
+</package>
+
+- To assign a value to the .nuspec file, one need only set the appropriate
+  ForceXXX value to "true" and give an appropriate value to the associatedkey.
+  If the ForceXXX value is set to "false", the associated value will NOT be
+  used and the value, if any, that can be derived from the AssemblyInfo.cs file
+  will be inserted in its place when the package is created.
+
+<add key="ForceAuthors" value="false"/>
+<add key="Authors" value="Authored by Az Web Engineering"/>
+<add key="ForceCopyright" value="false"/>
+<add key="Copyright" value="Copyright © 2015 Az Web Engineering"/>
+<add key="ForceDescription" value="false"/>
+<add key="Description" value="App.config Description."/>
+<add key="ForceIconUrl" value="false"/>
+<add key="IconUrl" value=""/>
+<add key="ForceLicenseUrl" value="false"/>
+<add key="LicenseUrl" value=""/>
+<add key="ForceOwners" value="false"/>
+<add key="Owners" value="Owned By Az Web Engineering"/>
+<add key="ForceProjectUrl" value="false"/>
+<add key="ProjectUrl" value=""/>
+<add key="ForceReleaseNotes" value="false"/>
+<add key="ReleaseNotes" value="App.config Release Notes."/>
+<add key="ForceRequireLicenseAcceptance" value="false"/>
+<add key="RequireLicenseAcceptance" value="false"/>
+<add key="ForceSummary" value="false"/>
+<add key="Summary" value="App.config Summary"/>
+<add key="ForceTags" value="false"/>
+<add key="Tags" value="AWE"/>
+<add key="ForceTitle" value="false"/>
+<add key="Title" value=""/>
+<add key="ForceVersion" value="false"/>
+<add key="Version" value=""/>
+
+- The dotnet.exe equivalent (if one were possible) is here. These values
+  actually represent the values found in one section of the .csproj file as
+  created for .NET Standard/Core projects. Given that Standard/Core projects
+  to not have a .nuspec file that can be created for them, it is necessary to
+  modify the .csproj file directly and apply the values as necessary.
+
+  *** Looks like "Company" equals "Owners" above.
+  *** The value of the NuGet "Summary" equals the dotnet "Product".
+
+- The following is an extraction from a .NET Standard project .csproj file with
+  the equivalent values expressed.
+
+  <AssemblyVersion>5.0.0.1</AssemblyVersion>
+  <Authors>Authoried by Az Web Engineering</Authors>
+  <Company>Company is Authoried by Az Web Engineering</Company>
+  <Copyright>Copyright ©  Az Web Engineering 2018</Copyright>
+  <Description>External handler for NuGet and dotnet nuget.</Description>
+  <FileVersion>2.0.0.0</FileVersion>
+  <PackageIconUrl>Url</PackageIconUrl>
+  <PackageLicenseUrl>LicenseUrl</PackageLicenseUrl>
+  <PackageProjectUrl>ProjectUrl</PackageProjectUrl>
+  <PackageReleaseNotes>Relase Notes</PackageReleaseNotes>
+  <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+  <PackageTags>AWE</PackageTags>
+  <Version>4.0.0.1</Version>
+  <Product>Some Product Summary</Product>
+
+********************************************************************************
+
+DotNet NuSpec settings (if DotNet nuget where to have such a thing as a .nuspec
+file)
+
+<add key="UseNuGetNuSpecValues" value="false"/>
+
+- If this value is set to "true", then the assigned values from the following
+  will be applied to the .csproj file and then those values will be applied
+  when the assembly is "packed" in preparation for creating the package.
+  
+  If the value is set to "false", then the values as found in the .csproj file
+  will be used.
+
+<add key="ForceAssemblyVersion" value="false"/>
+<add key="AssemblyVersion" value=""/>
+<add key="ForceAuthors" value="true"/>
+<add key="Authors" value="Az Web Engineering senior development team"/>
+<add key="ForceCompany" value="false"/>
+<add key="Company" value="Az Web Engineering"/>
+<add key="ForceCopyright" value="false"/>
+<add key="Copyright" value=""/>
+<add key="ForceDescription" value="false"/>
+<add key="Description" value=""/>
+<add key="ForceFileVersion" value="false"/>
+<add key="FileVersion" value=""/>
+<add key="ForcePackageIconUrl" value="false"/>
+<add key="PackageIconUrl" value=""/>
+<add key="ForcePackageLicenseUrl" value="false"/>
+<add key="PackageLicenseUrl" value=""/>
+<add key="ForcePackageProjectUrl" value="false"/>
+<add key="PackageProjectUrl" value=""/>
+<add key="ForcePackageReleaseNotes" value="false"/>
+<add key="PackageReleaseNotes" value=""/>
+<add key="ForcePackageRequireLicenseAcceptance" value="false"/>
+<add key="PackageRequireLicenseAcceptance" value=""/>
+<add key="ForcePackageTags" value="false"/>
+<add key="PackageTags" value=""/>
+<add key="ForceVersion" value="false"/>
+<add key="Version" value=""/>
+
+********************************************************************************
+
+DotNetFullFrameworkCommandSequence
+
+- The following are the definitions of the various command line sequences to be
+  used with the NuGet.exe program. The "key" portion will be used as the 
+  NuGet "verb" aka command, e.g. nuget pack, to be executed. The "value" portion
+  represents the actual command line before token substitution.
+
+  As a for instance, the "spec" command contains the following replaceable 
+  tokens:
+    $AssemblyPath$
+    $VerbosityNuget$
+
+  The $AssemblyPath$ is the full path to the .csproj file.
+  The $VerbosityNuget$ is the verbosity level of the nuget.exe program.
+
+  See the respective help files for NuGet.exe for additional details on the 
+  structure and content of each command that is supported by nuget.exe.
+
+  Change these values as appropriate for new versions of NuGet.exe. The current
+  version as of the writing of this help file is 4.5.1.4879.
+
+<add key="spec" value='-AssemblyPath "$AssemblyPath$" -force -NonInteractive -verbosity $VerbosityNuGet$'/>
+<add key="pack" value='"$ProjectPath$" -ExcludeEmptyDirectories -IncludeReferencedProjects -OutputDirectory "$OutputPackageTo$" -Verbosity $VerbosityNuGet$ -Version $PackageVersion$'/>
+<add key="push" value='$PackagePath$ -Source $Source$ -ApiKey $ApiKey$ -Verbosity $VerbosityNuGet$ -NonInteractive'/>
+<add key="add" value='$PackagePath$ -Source $Source$ -ApiKey $ApiKey$ -Verbosity $VerbosityNuGet$ -NonInteractive'/>
+<add key="delete" value='$PackageId$ $PackageVersion$ -Source $Source$ -ApiKey $ApiKey$ -NonInteractive-Verbosity $VerbosityNuGet$'/> 
+
+********************************************************************************
+********************************************************************************
+********************************************************************************
+********************************************************************************
+********************************************************************************
+
+Apparently, the following command line works just as well. I had wondered about
+the loss of setting the "version" like one can in NuGet.exe. This allows for that.
+Note that "publish" can be replaced by "pack".
+
+dotnet publish /property:Version=1.2.3.4
+
+Read further on this page: https://docs.microsoft.com/en-us/dotnet/standard/frameworks
+
+********************************************************************************
+********************************************************************************
+********************************************************************************
+********************************************************************************
+********************************************************************************
+
+DotNetStandard_2_0_CommandSequence
+
+<!--All keys must be expressed as lower case values e.g. "pack"-->
+<add key="pack" value='"$ProjectPath$" --configuration $ConfigurationName$ --force --no-build --no-restore --output "$OutputPackageTo$" --serviceable --verbosity $VerbosityDotNet$'/>
+<add key="push" value='"$PackagePath$" --source $Source$ --api-key $ApiKey$'/>
+<add key="delete" value='$PackageId$ $PackageVersion$ --source $Source$ --non-interactive --api-key $ApiKey$'/>
+
+********************************************************************************
+
+DotNetCore_2_0_CommandSequence
+
+<!--All keys must be expressed as lower case values e.g. "pack"-->
+<add key="pack" value='"$ProjectPath$" --configuration $ConfigurationName$ --force --no-build --no-restore --output "$OutputPackageTo$" --serviceable --verbosity $VerbosityDotNet$'/>
+<add key="push" value='"$PackagePath$" --source $Source$ --api-key $ApiKey$'/>
+<add key="delete" value='$PackageId$ $PackageVersion$ --source $Source$ --non-interactive --api-key $ApiKey$'/>
+
+********************************************************************************
+
+NuGetRepos
+
+- This section is where the various destinations are defined. Each destination
+  represents a diffrerent NuGet server or share (only in the case of NuGet.exe).
+
+  The following entries *MUST* come in pairs or quads unless the entry is a
+  local share. 
+  
+  Each entry translates as follows:
+    key=Arbritrary name given to the NuGet server e.g. "LocalVM"
+
+    value=Path to the NuGet Server (or local share)
+          API Key to the NuGet Server (blank for a local share)
+          Path to the NuGet Symbols Server
+          API Key to the NuGet Symbols Server
+  
+  The entries for the symbol server are optional. 
+  Each entry *MUST* be delimited by a semi-colon (;), even if the API Key is
+  blank, it's position *MUST* be delimited by a semi-colon in order for the
+  symbol server values to match up correctly.
+
+<add key="LocalVM" value="http://localhost:2017/api/v2/package;{B598D282-1039-427A-A09B-73CEFC95986E}"/>
+<add key="Home" value="http://10.20.30.40/api/v2/package;{0BD38176-3B76-4BFC-8E11-D6DE2ED0081C}"/>
+<add key="HomeNew" value="http://www.awenugetserver3.com/nuget;{589B0E44-2820-4F77-8AF4-1BB0D21B177D}"/>
+<add key="localShare" value="c:\Packages2017\LocalRepository"/>
+
+********************************************************************************
+
+NuGetDestinations (examples)
+
+- These values represent the "PushDestination" value as defined elsewhere.
+
+  Each PushDestination is a unique name that represents one or more NuGet
+  servers (repos) that a newly-created package will be pushed to.
+
+  One constructs a PushDestination by giving it a unique name and setting its
+  value to one or more NuGetRepos entries e.g. if a Repo (NuGet server) has a
+  name of "LocalVM" and another has a name of "Home", then a default
+  PushDestination might be given a name of "Default" and its value set to
+  "LocalVM;Home", the result being that a newly created package will be pushed
+  to both the LocalVM NuGet server and the Home NuGet server.
+  
+<add key="Default" value="LocalVM;HomeNew"/>
+<add key="DefaultTest" value="LocalVM;HomeNew;Home;LocalShare"/>
+<add key="LocalOnly" value="LocalVM"/>
+<add key="HomeHome" value="Home"/>
+<add key="HomeNewHome" value="HomeNew"/>
+<add key="LocalShareLocalShare" value="localShare"/>

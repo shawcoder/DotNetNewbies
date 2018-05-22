@@ -11,7 +11,7 @@ namespace NuGetHandler.ConfigurationHandler
 	using HandlerCommandLine;
 	using Infrastructure;
 	using Microsoft.Extensions.Configuration;
-
+	using static System.Console;
 	using static AppConfigHandling.CommandLineSettings;
 	using static CommandLineSwitches;
 
@@ -35,6 +35,9 @@ namespace NuGetHandler.ConfigurationHandler
 	public class HandleConfiguration
 		: IHandleConfiguration
 	{
+		private const StringComparison _COMPARISON =
+			StringComparison.InvariantCultureIgnoreCase;
+
 		// App.config section names
 		private const string _NUGET_REPOSITORIES = "NuGetRepos";
 		private const string _NUGET_PUSH_DESTINATIONS = "NuGetDestinations";
@@ -60,6 +63,37 @@ namespace NuGetHandler.ConfigurationHandler
 			}
 		}
 
+		private void FixupVerbosity(string[] aArgs)
+		{
+			if (!String.IsNullOrWhiteSpace(Verbosity))
+			{
+				bool vTest =
+					VERBOSITY_VALUES.IndexOf(Verbosity, _COMPARISON) >= 0;
+				if (vTest)
+				{
+					Enum.TryParse(Verbosity, true, out VerbosityE vVerbosity);
+					VerbosityLevel = vVerbosity;
+				}
+			}
+			if (VerbosityLevel == VerbosityE.Detailed)
+			{
+				WriteLine
+				(
+					"Raw command line arguments:"
+					+ $@" {aArgs[0].AsConditionallyQuoted()}"
+					+ $@" {aArgs[1].AsConditionallyQuoted()}"
+					+ $@" {aArgs[2].AsConditionallyQuoted()}"
+					+ $@" {aArgs[3].AsConditionallyQuoted()}"
+					+ $@" {aArgs[4].AsConditionallyQuoted()}"
+					+ $@" {aArgs[5].AsConditionallyQuoted()}"
+					+ $@" {aArgs[6].AsConditionallyQuoted()}"
+					+ $@" {aArgs[7].AsConditionallyQuoted()}"
+					+ $@" {aArgs[8].AsConditionallyQuoted()}"
+					+ $@" {aArgs[9].AsConditionallyQuoted()}"
+				);
+			}
+		}
+
 		private void LoadCommandLine(string[] aArgs)
 		{
 			Dictionary<string, string> vMappings =
@@ -73,7 +107,10 @@ namespace NuGetHandler.ConfigurationHandler
 			vMappings.Add(PROJECT_PATH, PROJECT_PATH_VARIANTS);
 			vMappings.Add(PUSH_TO_DESTINATION, PUSH_TO_DESTINATION_VARIANTS);
 			vMappings.Add(SHOW_ENVIRONMENT, SHOW_ENVIRONMENT_VARIANTS);
-			vMappings.Add(SHOW_HELP, SHOW_HELP_VARIANTS);
+			vMappings.Add(HELP, HELP_VARIANTS);
+			vMappings.Add
+				(INTERNAL_VERSION_SELECTOR, INTERNAL_VERSION_SELECTOR_VARIANTS);
+			vMappings.Add(OVERRIDE_VERSION, OVERRIDE_VERSION_VARIANTS);
 			vMappings.Add(SOLUTION_PATH, SOLUTION_PATH_VARIANTS);
 			vMappings.Add(TARGET_PATH, TARGET_PATH_VARIANTS);
 			vMappings.Add(VERBOSITY, VERBOSITY_VARIANTS);
@@ -92,6 +129,7 @@ namespace NuGetHandler.ConfigurationHandler
 			{
 				CommandLineValuesHelper.AssignDefaultsToStatic();
 			}
+			FixupVerbosity(aArgs);
 		}
 
 		private void ValidateConfiguration()
@@ -115,15 +153,20 @@ namespace NuGetHandler.ConfigurationHandler
 
 		private void ProcessCommandLine()
 		{
-			if (!String.IsNullOrWhiteSpace(Verbosity))
+			if (!String.IsNullOrWhiteSpace(InternalVersionSelector))
 			{
 				bool vTest =
-					VERBOSITY_VALUES.IndexOf
-						(Verbosity, StringComparison.OrdinalIgnoreCase) >= 0;
+					INTERNAL_VERSION_SELECTOR_VALUES.IndexOf
+						(InternalVersionSelector, _COMPARISON) >= 0;
 				if (vTest)
 				{
-					Enum.TryParse(Verbosity, true, out VerbosityE vVerbosity);
-					VerbosityLevel = vVerbosity;
+					Enum.TryParse
+					(
+						InternalVersionSelector
+						, true
+						, out InternalVersionSelectorE vInternalVersionSelector
+					);
+					SelectedVersion = vInternalVersionSelector;
 				}
 			}
 			string vPath;
@@ -435,23 +478,20 @@ namespace NuGetHandler.ConfigurationHandler
 		{
 			if (aArgs.Length == 0)
 			{
-				ShowHelp = HelpSections.HELP_ON_HELP;
+				CommandLineSettings.Help = HelpSections.HELP;
 			}
 			else
 			{
 				LoadCommandLine(aArgs);
-				if (!NoOp)
-				{
-					ProcessCommandLine();
-					LoadInitialConfiguration();
-					FetchTheConfiguration();
-					if (ErrorContainer.Errors.Count > 0)
-					{
-						throw new Exception("Invalid configuration.");
-					}
-					ProcessNuGetServers();
-				}
+				ProcessCommandLine();
 			}
+			LoadInitialConfiguration();
+			FetchTheConfiguration();
+			if (ErrorContainer.Errors.Count > 0)
+			{
+				throw new Exception("Invalid configuration.");
+			}
+			ProcessNuGetServers();
 		}
 
 		public AppSettings AppSettingsValues { get; set; }

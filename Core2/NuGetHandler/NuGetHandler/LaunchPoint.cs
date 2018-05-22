@@ -8,6 +8,7 @@ namespace NuGetHandler
 	using Infrastructure;
 	using ProjectFileProcessing;
 	using Run_NuGet;
+	using static Consts;
 	using static Help.Help;
 	using static ProjectFileProcessing.ProcessProjectFile;
 	using static Run_NuGet.TokenSetContainer;
@@ -39,11 +40,11 @@ namespace NuGetHandler
 		private void InitializeTokenSet()
 		{
 			// Initialize from App.config and command line settings
-			AssemblyPath = CommandLineSettings.TargetPath;
-			ProjectPath = CommandLineSettings.ProjectPath;
+			AssemblyPath = CommandLineSettings.TargetPath ?? String.Empty;
+			ProjectPath = CommandLineSettings.ProjectPath ?? String.Empty;
 			BasePath = _HandleConfiguration.AppSettingsValues.BasePath;
 			ConfigFile = _HandleConfiguration.AppSettingsValues.ConfigFile;
-			ConfigurationName = CommandLineSettings.ConfigurationName;
+			ConfigurationName = CommandLineSettings.ConfigurationName ?? String.Empty;
 			VerbosityDotNet = _HandleConfiguration.AppSettingsValues.VerbosityDotNet;
 			VersionSuffixDotNet =
 				_HandleConfiguration.AppSettingsValues.VersionSuffixDotNet;
@@ -60,47 +61,85 @@ namespace NuGetHandler
 			RuntimeIdentifier =
 				_HandleConfiguration.AppSettingsValues.RuntimeIdentifier;
 			Timeout = _HandleConfiguration.AppSettingsValues.Timeout;
-			PackageId = CommandLineSettings.TargetName;
-			PackageName = CommandLineSettings.TargetName;
+			PackageId = CommandLineSettings.TargetName ?? String.Empty;
+			PackageName = CommandLineSettings.TargetName ?? String.Empty;
 
 			// Calculated settings
 
-			PackageVersion =
-				_HandleConfiguration.AppSettingsValues.ForceVersionOverride
-					? _HandleConfiguration.AppSettingsValues.VersionOverride
-					: FrameworkInformation.PackageVersion;
+			NuSpecFilePath = Path.ChangeExtension(ProjectPath, NUSPEC_EXT);
+		}
+
+		private void SetFrameworkInfo()
+		{
+			if (CommandLineSettings.SelectedVersion != InternalVersionSelectorE.Unknown)
+			{
+				switch (CommandLineSettings.SelectedVersion)
+				{
+					case InternalVersionSelectorE.AssemblyFileVersion:
+					{
+						PackageVersion = FrameworkInformation.AssemblyFileVersion;
+						break;
+					}
+					case InternalVersionSelectorE.AssemblyVersion:
+					{
+						PackageVersion = FrameworkInformation.AssemblyVersion;
+						break;
+					}
+					case InternalVersionSelectorE.PackageVersion:
+					{
+						PackageVersion = FrameworkInformation.PackageVersion;
+						break;
+					}
+					default:
+					{
+						PackageVersion = FrameworkInformation.AssemblyFileVersion;
+						break;
+					}
+				}
+			}
+			else
+			{
+				PackageVersion =
+					_HandleConfiguration.AppSettingsValues.ForceVersionOverride
+						? _HandleConfiguration.AppSettingsValues.VersionOverride
+						: FrameworkInformation.PackageVersion;
+			}
 
 			PackageFileName =
-				Path.ChangeExtension(CommandLineSettings.TargetName, PackageVersion)
-					+ Consts.PACKAGE_EXT;
+				CommandLineSettings.TargetName
+					+ DOT
+					+ PackageVersion
+					//				Path.ChangeExtension(CommandLineSettings.TargetName, PackageVersion)
+					+ PACKAGE_EXT;
 
 			PackageDir =
 				Environment.ExpandEnvironmentVariables
 					(_HandleConfiguration.AppSettingsValues.PackageHomeDir).AsDir()
-						+ CommandLineSettings.SolutionName.AsDir()
-						+ CommandLineSettings.TargetName.AsDir()
-						+ PackageVersion.AsDir();
+				+ CommandLineSettings.SolutionName?.AsDir() ?? "".AsDir()
+				+ CommandLineSettings.TargetName?.AsDir() ?? "".AsDir()
+				+ PackageVersion.AsDir();
 			PackagePath = PackageDir + PackageFileName;
 
-			NuSpecFilePath = Path.ChangeExtension(ProjectPath, Consts.NUSPEC_EXT);
 		}
 
 		public void Execute(string[] aArgs)
 		{
 			_HandleConfiguration.ProcessConfiguration(aArgs);
 			InitializeTokenSet();
-			ProcessProjectFileContent();
-			bool vTest = !String.IsNullOrEmpty(CommandLineSettings.ShowHelp);
+			bool vTest = !String.IsNullOrEmpty(CommandLineSettings.Help);
 			if (vTest)
 			{
 				Help.Help.HandleConfiguration = _HandleConfiguration;
+				CommandLineSettings.Help = CommandLineSettings.Help.ToLower();
 				GenerateHelp();
 				Wait.Pause();
 				return;
 			}
+			ProcessProjectFileContent();
+			SetFrameworkInfo();
 			vTest =
 				CommandLineSettings.NoOp
-					|| (_HandleConfiguration.AppSettingsValues?.SuspendHandling ?? true);
+				|| (_HandleConfiguration.AppSettingsValues?.SuspendHandling ?? true);
 			if (!vTest)
 			{
 				_SpawnNugetProcesses.Spawn(_HandleConfiguration);

@@ -5,6 +5,13 @@
 
 	public static class StringHelper
 	{
+		private const int _PAD_INTO = 30;
+
+		public static string AsConditionallyQuoted(this string aString)
+		{
+			return aString.Contains(" ") ? $@"""{aString}""" : aString;
+		}
+
 		public static string SetLastChar(this string aString, char aChar)
 		{
 			string vResult =
@@ -49,5 +56,34 @@
 			string vResult = $"${aTokenName}$";
 			return vResult;
 		}
+
+		public static string PadItRight(this string aWord)
+		{
+			if (String.IsNullOrEmpty(aWord))
+			{
+				aWord = String.Empty;
+			}
+			string vResult = aWord + ":".PadRight(_PAD_INTO - aWord.Length);
+			return vResult;
+		}
+
+		public static string PadItLeft
+			(this string aWord, bool aInsertNewLine = false)
+		{
+			if (String.IsNullOrEmpty(aWord))
+			{
+				aWord = String.Empty;
+			}
+			string vResult =
+				String.Empty.PadLeft(_PAD_INTO)
+					+ aWord
+					+ (
+							aInsertNewLine
+								? "\n"
+								: String.Empty
+						);
+			return vResult;
+		}
+
 	}
 }

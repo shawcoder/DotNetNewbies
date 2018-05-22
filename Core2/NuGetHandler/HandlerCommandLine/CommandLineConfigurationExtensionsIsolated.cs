@@ -8,8 +8,8 @@
 	{
 		public static IConfigurationBuilder AddCommandLineIsolated
 		(
-		this IConfigurationBuilder aBuilder
-		, string[] aArgs
+			this IConfigurationBuilder aBuilder
+			, string[] aArgs
 		)
 		{
 			return aBuilder.AddCommandLineIsolated(aArgs, null);
@@ -17,9 +17,9 @@
 
 		public static IConfigurationBuilder AddCommandLineIsolated
 		(
-		this IConfigurationBuilder aBuilder
-		, string[] aArgs
-		, IDictionary<string, string> aMappings
+			this IConfigurationBuilder aBuilder
+			, string[] aArgs
+			, IDictionary<string, string> aMappings
 		)
 		{
 			CommandLineConfigurationSourceIsolated vSource =
@@ -34,8 +34,8 @@
 
 		public static IConfigurationBuilder AddCommandLineIsolated
 		(
-		this IConfigurationBuilder aBuilder
-		, Action<CommandLineConfigurationSourceIsolated> aConfig
+			this IConfigurationBuilder aBuilder
+			, Action<CommandLineConfigurationSourceIsolated> aConfig
 		) => aBuilder.Add(aConfig);
 
 	}

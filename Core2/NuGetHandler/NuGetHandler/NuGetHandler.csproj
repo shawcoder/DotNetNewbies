@@ -4,19 +4,19 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyVersion>5.0.0.1</AssemblyVersion>
-    <Authors>Az Web Engineering authored this and it's noted in the NuGetHandler app.config file - Config File Override</Authors>
+    <Authors>Az Web Engineering - Package property page</Authors>
     <Company></Company>
-    <Copyright>Copyright © 2012 Az Web Engineering - Config Override</Copyright>
-    <Description>App.config Description - Config Override.</Description>
+    <Copyright>Copyright © 2012 Az Web Engineering - Package property page</Copyright>
+    <Description>NuGetHandler - NuGet driver program - Package property page</Description>
     <FileVersion>2.0.0.0</FileVersion>
     <PackageTags>AWE</PackageTags>
-    <PackageLicenseUrl>LicenseUrl</PackageLicenseUrl>
-    <PackageProjectUrl>ProjectUrl</PackageProjectUrl>
-    <PackageIconUrl>Url</PackageIconUrl>
+    <PackageLicenseUrl>LicenseUrl - Package property page</PackageLicenseUrl>
+    <PackageProjectUrl>ProjectUrl - Package property page</PackageProjectUrl>
+    <PackageIconUrl>Url - Package property page</PackageIconUrl>
     <PackageReleaseNotes>Relase Notes</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>4.0.0.1</Version>
-    <Product>SomeGoofyProduct</Product>
+    <Version>9.8.7.6</Version>
+    <Product>NuGetHandler - Package property page</Product>
     <ApplicationIcon />
     <StartupObject />
   </PropertyGroup>
@@ -25,14 +25,15 @@
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="2.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="2.0.2" />
     <PackageReference Include="runtime.win-x64.Microsoft.NETCore.App" Version="2.0.7" />
   </ItemGroup>
   <ItemGroup>
@@ -48,6 +49,6 @@
     </None>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE&#xD;&#xA;DEL &quot;%APPDATA%\NuGet\win10-x64\*.*&quot; /Q &gt; NUL&#xD;&#xA;REM Change the next line to COPY &quot;$(TargetDir)*.*&quot; &quot;%APPDATA%\NuGet\win10-x64&quot; &gt; NUL unless the desire is to execute the program from within VS in Release mode.&#xD;&#xA;COPY &quot;$(TargetDir)*.*&quot; &quot;%APPDATA%\NuGet\win10-x64&quot; &gt; NUL&#xD;&#xA;IF EXIST &quot;%APPDATA%\NuGet\win10-x64\App.optional.config&quot; DEL &quot;%APPDATA%\NuGet\win10-x64\App.optional.config&quot;&#xD;&#xA;REM Custom Command Line Handler Version&#xD;&#xA;REM dotnet &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; --T~&quot;$(TargetPath)&quot; --S~&quot;$(SolutionPath)&quot; --P~&quot;$(ProjectPath)&quot; --C=$(ConfigurationName) --V=quiet --N --E&#xD;&#xA;REM Standard Command Line Handler Version&#xD;&#xA;REM ***************************************************************************************************&#xD;&#xA;REM Use This one!&#xD;&#xA;dotnet &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; --T=&quot;$(TargetPath)&quot; --S=&quot;$(SolutionPath)&quot; --P=&quot;$(ProjectPath)&quot; --C=$(ConfigurationName)  --V=quiet --N --E --Q --H=all&#xD;&#xA;REM ***************************************************************************************************&#xD;&#xA;REM&#xD;&#xA;REM BEWARE OF A NASTY LITTLE BUG IN WINDOWS ITSELF. The method used to&#xD;&#xA;REM parse the command line will cause the rest of the arguments to be&#xD;&#xA;REM added TO THE LAST PARAMETER if the preceding parameter is quoted &#xD;&#xA;REM and ENDS in a '\' (backslash character). &#xD;&#xA;REM e.g. ~S &quot;c:\SomeDir\SomeSubDir\&quot; -B -C ~M&#xD;&#xA;REM will cause the last parameter in the array to be:&#xD;&#xA;REM c:\SomeDir\SomeSubDir\ -B -C ~M&#xD;&#xA;REM NOT the expected ~M.&#xD;&#xA;REM The solution? End the offending parameter with a trailing backslash&#xD;&#xA;REM BEFORE enclosing it in quotes. e.g. &quot;c:\SomeDir\SomeSubDir\\&quot; -B -C ~M&#xD;&#xA;REM                                                                                                             ^&#xD;&#xA;REM Note the inserted trailing backslash indicated by the above ^ marker.&#xD;&#xA;REM&#xD;&#xA;REM Note that this bug affects EVERY PARAMETER, REGARDLESS OF POSITION IN&#xD;&#xA;REM the command line! Therefore, ALL paths that are quoted that end in a&#xD;&#xA;REM path delimiter MUST BE ESCAPED BY DOUBLING THE FINAL PATH DELIMITER!&#xD;&#xA;REM&#xD;&#xA;REM IF EXIST &quot;$(SolutionDir)NuGetHandler.bat&quot; CALL &quot;$(SolutionDir)NuGetHandler&quot;   --T=&quot;$(TargetDir)&quot;  --S=&quot;$(SolutionDir)&quot; -P=&quot;$(ProjectDir)&quot; --C=$(ConfigurationName) --V=quiet --N&#xD;&#xA;REM IF EXIST &quot;$(SolutionDir)NuGetHandler.bat&quot; CALL &quot;$(SolutionDir)NuGetHandler&quot;   --T=&quot;$(TargetPath)&quot;  --S=&quot;$(SolutionPath)&quot; -P=&quot;$(ProjectPath)&quot; --C=$(ConfigurationName) --V=quiet --N&#xD;&#xA;REM IF EXIST &quot;$(SolutionDir)NuGetHandler.bat&quot; CALL &quot;$(SolutionDir)NuGetHandler&quot;   --T~&quot;$(TargetPath)&quot;  --S~&quot;$(SolutionPath)&quot; -P~&quot;$(ProjectPath)&quot; --C=$(ConfigurationName) --V=quiet --N&#xD;&#xA;ECHO Successfull Release Build&#xD;&#xA;GOTO END&#xD;&#xA;:NOT_RELEASE&#xD;&#xA;ECHO Not Release&#xD;&#xA;:END&#xD;&#xA;ECHO END Reached" />
+    <Exec Command="IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE&#xD;&#xA;DEL &quot;%APPDATA%\NuGet\win10-x64\*.*&quot; /Q &gt; NUL&#xD;&#xA;REM Change the next line to COPY &quot;$(TargetDir)*.*&quot; &quot;%APPDATA%\NuGet\win10-x64&quot; &gt; NUL unless the desire is to execute the program from within VS in Release mode.&#xD;&#xA;COPY &quot;$(TargetDir)*.*&quot; &quot;%APPDATA%\NuGet\win10-x64&quot; &gt; NUL&#xD;&#xA;IF EXIST &quot;%APPDATA%\NuGet\win10-x64\App.optional.config&quot; DEL &quot;%APPDATA%\NuGet\win10-x64\App.optional.config&quot;&#xD;&#xA;REM Custom Command Line Handler Version&#xD;&#xA;REM dotnet &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; --T~&quot;$(TargetPath)&quot; --S~&quot;$(SolutionPath)&quot; --P~&quot;$(ProjectPath)&quot; --C=$(ConfigurationName) --V=quiet --N --E&#xD;&#xA;REM Standard Command Line Handler Version&#xD;&#xA;REM ***************************************************************************************************&#xD;&#xA;REM Use This one!&#xD;&#xA;dotnet &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot;  -t &quot;$(TargetPath)&quot; -s &quot;$(SolutionPath)&quot; -p &quot;$(ProjectPath)&quot; -c $(ConfigurationName) -v detailed&#xD;&#xA;REM ***************************************************************************************************&#xD;&#xA;REM&#xD;&#xA;REM BEWARE OF A NASTY LITTLE BUG IN WINDOWS ITSELF. The method used to&#xD;&#xA;REM parse the command line will cause the rest of the arguments to be&#xD;&#xA;REM added TO THE LAST PARAMETER if the preceding parameter is quoted &#xD;&#xA;REM and ENDS in a '\' (backslash character). &#xD;&#xA;REM e.g. ~S &quot;c:\SomeDir\SomeSubDir\&quot; -B -C ~M&#xD;&#xA;REM will cause the last parameter in the array to be:&#xD;&#xA;REM c:\SomeDir\SomeSubDir\ -B -C ~M&#xD;&#xA;REM NOT the expected ~M.&#xD;&#xA;REM The solution? End the offending parameter with a trailing backslash&#xD;&#xA;REM BEFORE enclosing it in quotes. e.g. &quot;c:\SomeDir\SomeSubDir\\&quot; -B -C ~M&#xD;&#xA;REM                                                                                                             ^&#xD;&#xA;REM Note the inserted trailing backslash indicated by the above ^ marker.&#xD;&#xA;REM&#xD;&#xA;REM Note that this bug affects EVERY PARAMETER, REGARDLESS OF POSITION IN&#xD;&#xA;REM the command line! Therefore, ALL paths that are quoted that end in a&#xD;&#xA;REM path delimiter MUST BE ESCAPED BY DOUBLING THE FINAL PATH DELIMITER!&#xD;&#xA;REM&#xD;&#xA;REM IF EXIST &quot;$(SolutionDir)NuGetHandler.bat&quot; CALL &quot;$(SolutionDir)NuGetHandler&quot;   --T=&quot;$(TargetDir)&quot;  --S=&quot;$(SolutionDir)&quot; -P=&quot;$(ProjectDir)&quot; --C=$(ConfigurationName) --V=quiet --N&#xD;&#xA;REM IF EXIST &quot;$(SolutionDir)NuGetHandler.bat&quot; CALL &quot;$(SolutionDir)NuGetHandler&quot;   --T=&quot;$(TargetPath)&quot;  --S=&quot;$(SolutionPath)&quot; -P=&quot;$(ProjectPath)&quot; --C=$(ConfigurationName) --V=quiet --N&#xD;&#xA;REM IF EXIST &quot;$(SolutionDir)NuGetHandler.bat&quot; CALL &quot;$(SolutionDir)NuGetHandler&quot;   --T~&quot;$(TargetPath)&quot;  --S~&quot;$(SolutionPath)&quot; -P~&quot;$(ProjectPath)&quot; --C=$(ConfigurationName) --V=quiet --N&#xD;&#xA;ECHO Successfull Release Build&#xD;&#xA;GOTO END&#xD;&#xA;:NOT_RELEASE&#xD;&#xA;ECHO Not Release&#xD;&#xA;:END&#xD;&#xA;ECHO END Reached" />
   </Target>
 </Project>

@@ -1,14 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Version>9.0.0.2</Version>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.0.1" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
       <HintPath>..\..\..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.configuration.abstractions\2.0.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
@@ -17,5 +16,7 @@
       <HintPath>..\..\..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.configuration.fileextensions\2.0.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.FileExtensions.dll</HintPath>
     </Reference>
   </ItemGroup>
-
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="@echo off&#xD;&#xA;IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE&#xD;&#xA;REM ECHO dotnet &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; -t &quot;$(TargetPath)&quot; -s &quot;$(SolutionPath)&quot; -p &quot;$(ProjectPath)&quot; -c $(ConfigurationName) -v detailed&#xD;&#xA;dotnet &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; -t &quot;$(TargetPath)&quot; -s &quot;$(SolutionPath)&quot; -p &quot;$(ProjectPath)&quot; -c $(ConfigurationName) -v detailed&#xD;&#xA;:NOT_RELEASE&#xD;&#xA;:END" />
+  </Target>
 </Project>

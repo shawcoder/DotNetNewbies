@@ -44,12 +44,10 @@
 		public string Tags { get; set; }
 		public bool ForceTitle { get; set; }
 		public string Title { get; set; }
-		//"Id" and "Version" are handled elsewhere. The "Id" value is left as-is,
-		//"Version" is handled by the "ForceVersionOverride" and "VersionOverride"
-		//values as found in the app settings section.
+		public bool ForceVersion { get; set; }
+		public string Version { get; set; }
 
 		//public string Id { get; set; }
-		//public string Version { get; set; }
 	}
 
 	public static class NuSpecValuesHelper
@@ -80,8 +78,8 @@
 			aTo.Tags = aFrom.Tags;
 			aTo.ForceTitle = aFrom.ForceTitle;
 			aTo.Title = aFrom.Title;
-			//aTo.Id = aFrom.Id;
-			//aTo.Version = aFrom.Version;
+			aTo.ForceVersion = aFrom.ForceVersion;
+			aTo.Version = aFrom.Version;
 		}
 
 		public static void AssignFrom

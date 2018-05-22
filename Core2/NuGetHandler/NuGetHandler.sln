@@ -19,6 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		App.optional.config = App.optional.config
 		..\App.optional.config = ..\App.optional.config
+		..\..\DotNet_4.7\AWE 9.x\App.optional.config = ..\..\DotNet_4.7\AWE 9.x\App.optional.config
+		NuGetHandler Help.txt = NuGetHandler Help.txt
+		..\..\NuGetHandler.bat = ..\..\NuGetHandler.bat
 		ReadMe.txt = ReadMe.txt
 	EndProjectSection
 EndProject
