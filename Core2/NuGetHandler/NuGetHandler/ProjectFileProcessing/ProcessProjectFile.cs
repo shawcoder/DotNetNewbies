@@ -105,10 +105,10 @@
 		/// </remarks>
 		private static (DotNetFramework, string) CheckForStandard(string aFileName)
 		{
-			(XDocument Doc, XElement Parent, string Value) vNode =
-				aFileName.XDocElementParentAndValue(_LOOK_FOR_TARGET_FRAMEWORK);
+			(XDocument Doc, XElement Node, string Value) vNode =
+				aFileName.XDocDocumentAndElementAndValue(_LOOK_FOR_TARGET_FRAMEWORK);
 			NodeDocument = vNode.Doc;
-			NodeParent = vNode.Parent;
+			NodeParent = vNode.Node.Parent;
 			string vFramework = vNode.Value;
 			(DotNetFramework, string) vResult =
 				ProcessFramework(vFramework, _NET_STANDARD, DotNetFramework.Standard);
@@ -117,10 +117,10 @@
 
 		private static (DotNetFramework, string) CheckForCore(string aFileName)
 		{
-			(XDocument Doc, XElement Parent, string Value) vNode =
-				aFileName.XDocElementParentAndValue(_LOOK_FOR_TARGET_FRAMEWORK);
+			(XDocument Doc, XElement Node, string Value) vNode =
+				aFileName.XDocDocumentAndElementAndValue(_LOOK_FOR_TARGET_FRAMEWORK);
 			NodeDocument = vNode.Doc;
-			NodeParent = vNode.Parent;
+			NodeParent = vNode.Node.Parent;
 			string vFramework = vNode.Value;
 			(DotNetFramework, string) vResult =
 				ProcessFramework(vFramework, _NET_CORE, DotNetFramework.Core);
@@ -177,6 +177,11 @@
 			(DotNetFramework, string) vTest = ExtractTargetFramework();
 			Framework = vTest.Item1;
 			FrameworkVersion = vTest.Item2;
+			if (Framework == DotNetFramework.Unknown)
+			{
+				throw new Exception
+					($"Cannot determine framework for project: \n{ProjectPath}");
+			}
 			if (Framework != DotNetFramework.Full)
 			{
 				PackageVersion = ExtractPackageVersion();

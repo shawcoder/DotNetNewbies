@@ -30,7 +30,7 @@
 			WriteLine(aExceptionArgs.ExceptionObject.ToString());
 			bool vTest =
 				Debugger.IsAttached
-				|| CommandLineSettings.Wait;
+					|| CommandLineSettings.Wait;
 			if (vTest)
 			{
 				WriteLine("Please press a key to conmplete processing...");

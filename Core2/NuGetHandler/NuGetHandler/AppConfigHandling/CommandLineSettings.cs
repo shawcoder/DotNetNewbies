@@ -66,8 +66,6 @@
 
 	public class CommandLineValues
 	{
-		private string _InternalVersionSelector;
-
 		public string TargetPath { get; set; }
 		public string TargetDir { get; set; }
 		public string TargetExt { get; set; }

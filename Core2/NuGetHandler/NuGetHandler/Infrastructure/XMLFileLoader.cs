@@ -42,7 +42,7 @@
 			return vResult;
 		}
 
-		public static (XDocument, XElement, string) XDocElementParentAndValue
+		public static (XDocument, XElement, string) XDocDocumentAndElementAndValue
 			(this string aFileName, string aLookFor)
 		{
 			XDocument vDoc = aFileName.LoadAsXDocument();

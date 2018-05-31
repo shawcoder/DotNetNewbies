@@ -14,7 +14,7 @@
     <PackageProjectUrl>ProjectUrl</PackageProjectUrl>
     <PackageIconUrl>IconUrl</PackageIconUrl>
     <Version>14.15.16.17</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.Configuration">
@@ -22,6 +22,6 @@
     </Reference>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="@echo off&#xD;&#xA;IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE&#xD;&#xA;REM ECHO dotnet &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; -t &quot;$(TargetPath)&quot; -s &quot;$(SolutionPath)&quot; -p &quot;$(ProjectPath)&quot; -c $(ConfigurationName) -v detailed&#xD;&#xA;dotnet &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; -t &quot;$(TargetPath)&quot; -s &quot;$(SolutionPath)&quot; -p &quot;$(ProjectPath)&quot; -c $(ConfigurationName) -v detailed&#xD;&#xA;:NOT_RELEASE&#xD;&#xA;:END" />
+    <Exec Command="@echo off&#xD;&#xA;IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE&#xD;&#xA;IF EXIST &quot;$(SolutionDir)CopyToT4Support.bat&quot; CALL &quot;$(SolutionDir)CopyToT4Support&quot; &quot;$(TargetPath)&quot; &quot;$(SolutionDir)&quot;&#xD;&#xA;IF NOT EXIST &quot;%VSProjectsDir%NuGetHandler.bat&quot; GOTO DIRECT&#xD;&#xA;CALL &quot;%VSProjectsDir%NuGetHandler.bat&quot;  &quot;$(TargetPath)&quot; &quot;$(SolutionPath)&quot; &quot;$(ProjectPath)&quot; $(ConfigurationName)&#xD;&#xA;GOTO END&#xD;&#xA;:DIRECT&#xD;&#xA;IF NOT EXIST &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; GOTO END&#xD;&#xA;dotnet &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; -t &quot;$(TargetPath)&quot; -s &quot;$(SolutionPath)&quot; -p &quot;$(ProjectPath)&quot; -c $(ConfigurationName) -v normal&#xD;&#xA;GOTO END&#xD;&#xA;:NOT_RELEASE&#xD;&#xA;GOTO END&#xD;&#xA;:END&#xD;&#xA;" />
   </Target>
 </Project>

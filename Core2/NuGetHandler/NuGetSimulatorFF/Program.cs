@@ -16,8 +16,8 @@
 			{
 				WriteLine($"Argument: {vArg}");
 			}
-			WriteLine("\nPress a key to continue...");
-			ReadKey();
+			//WriteLine("\nPress a key to continue...");
+			//ReadKey();
 			WriteLine("\nEnd Simulator\n");
 			return _EXIT_CODE;
 		}
