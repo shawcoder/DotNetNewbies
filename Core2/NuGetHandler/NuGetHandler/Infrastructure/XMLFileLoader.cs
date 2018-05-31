@@ -16,7 +16,8 @@
 					.FirstOrDefault
 					(
 						vRec =>
-							vRec.Name.ToString().Equals(aLookFor, COMPARISON)
+							//vRec.Name.ToString().Equals(aLookFor, COMPARISON)
+							vRec.Name.LocalName.Equals(aLookFor, COMPARISON)
 					);
 			return vResult;
 		}
