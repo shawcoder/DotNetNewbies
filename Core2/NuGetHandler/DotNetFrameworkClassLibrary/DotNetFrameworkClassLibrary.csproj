@@ -49,9 +49,17 @@
   <PropertyGroup>
     <PostBuildEvent>@echo off
 IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE
-REM ECHO dotnet "%25APPDATA%25\NuGet\win10-x64\NuGetHandler.dll" -t "$(TargetPath)" -s "$(SolutionPath)" -p "$(ProjectPath)" -c $(ConfigurationName) -v detailed
-dotnet "%25APPDATA%25\NuGet\win10-x64\NuGetHandler.dll" -t "$(TargetPath)" -s "$(SolutionPath)" -p "$(ProjectPath)" -c $(ConfigurationName) -v detailed
+IF EXIST "$(SolutionDir)CopyToT4Support.bat" CALL "$(SolutionDir)CopyToT4Support" "$(TargetPath)" "$(SolutionDir)"
+IF NOT EXIST "%25VSProjectsDir%25NuGetHandler.bat" GOTO DIRECT
+CALL "%25VSProjectsDir%25NuGetHandler.bat"  "$(TargetPath)" "$(SolutionPath)" "$(ProjectPath)" $(ConfigurationName)
+GOTO END
+:DIRECT
+IF NOT EXIST "%25APPDATA%25\NuGet\win10-x64\NuGetHandler.dll" GOTO END
+dotnet "%25APPDATA%25\NuGet\win10-x64\NuGetHandler.dll" -T "$(TargetPath)" -S "$(SolutionPath)" -P "$(ProjectPath)" -C $(ConfigurationName) -V normal
+GOTO END
 :NOT_RELEASE
-:END</PostBuildEvent>
+GOTO END
+:END
+</PostBuildEvent>
   </PropertyGroup>
 </Project>

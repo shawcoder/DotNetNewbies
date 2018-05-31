@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE&#xD;&#xA;DEL &quot;%APPDATA%\NuGet\NuGetSimulator\*.*&quot; /Q &gt; NUL&#xD;&#xA;MOVE &quot;$(TargetDir)*.*&quot; &quot;%APPDATA%\NuGet\NuGetSimulator&quot; &gt; NUL&#xD;&#xA;GOTO END&#xD;&#xA;:NOT_RELEASE&#xD;&#xA;:END" />
+    <Exec Command="@echo off&#xD;&#xA;IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE&#xD;&#xA;IF EXIST &quot;$(SolutionDir)CopyToT4Support.bat&quot; CALL &quot;$(SolutionDir)CopyToT4Support&quot; &quot;$(TargetPath)&quot; &quot;$(SolutionDir)&quot;&#xD;&#xA;IF NOT EXIST &quot;%VSProjectsDir%NuGetHandler.bat&quot; GOTO DIRECT&#xD;&#xA;CALL &quot;%VSProjectsDir%NuGetHandler.bat&quot;  &quot;$(TargetPath)&quot; &quot;$(SolutionPath)&quot; &quot;$(ProjectPath)&quot; $(ConfigurationName)&#xD;&#xA;GOTO END&#xD;&#xA;:DIRECT&#xD;&#xA;IF NOT EXIST &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; GOTO END&#xD;&#xA;dotnet &quot;%APPDATA%\NuGet\win10-x64\NuGetHandler.dll&quot; -T &quot;$(TargetPath)&quot; -S &quot;$(SolutionPath)&quot; -P &quot;$(ProjectPath)&quot; -C $(ConfigurationName) -V normal&#xD;&#xA;GOTO END&#xD;&#xA;:NOT_RELEASE&#xD;&#xA;GOTO END&#xD;&#xA;:END&#xD;&#xA;" />
   </Target>
 
 </Project>
