@@ -23,6 +23,9 @@
 		public string DefaultVerbosity { get; set; }
 		public bool ForceVersionOverride { get; set; }
 		public string VersionOverride { get; set; }
+		public bool UseDateBasedVersion { get; set; }
+		public bool AutoIncrementBuildNumber { get; set; }
+
 		public string PackageHomeDir { get; set; }
 		public bool RequireReleaseNotesFile { get; set; }
 		public string ReleaseNotesFileName { get; set; }
@@ -80,6 +83,8 @@
 			aTo.BasePath = aFrom.BasePath;
 			aTo.ForceVersionOverride = aFrom.ForceVersionOverride;
 			aTo.VersionOverride = aFrom.VersionOverride;
+			aTo.UseDateBasedVersion = aFrom.UseDateBasedVersion;
+			aTo.AutoIncrementBuildNumber = aFrom.AutoIncrementBuildNumber;
 			aTo.PackageHomeDir = aFrom.PackageHomeDir;
 			aTo.RequireReleaseNotesFile = aFrom.RequireReleaseNotesFile;
 			aTo.ReleaseNotesFileName = aFrom.ReleaseNotesFileName;

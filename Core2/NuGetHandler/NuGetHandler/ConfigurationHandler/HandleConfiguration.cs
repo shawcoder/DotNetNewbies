@@ -254,7 +254,8 @@ namespace NuGetHandler.ConfigurationHandler
 				new ConfigurationBuilder()
 					.AddAppConfig(aConfigPath, true, true)
 					.Build();
-				NuGetNuSpecValues vNuGetNuSpecSettings = _Configuration.Get<NuGetNuSpecValues>();
+				NuGetNuSpecValues vNuGetNuSpecSettings =
+					_Configuration.Get<NuGetNuSpecValues>();
 				AppSettings vAppSettingsValues = _Configuration.Get<AppSettings>();
 				NuGetNuSpecSettings.AssignFrom(vNuGetNuSpecSettings);
 				DotNetNuSpecSettings = _Configuration.Get<DotNetNuSpecValues>();
@@ -336,25 +337,41 @@ namespace NuGetHandler.ConfigurationHandler
 
 		private void FetchTheConfiguration()
 		{
+			// Fetch out the original config values from app.config.
 			ExtractConfigValues();
+			// If we allow optional configuration files from the original app.config
 			if (AppSettingsValues.AllowOptionalAppConfig)
 			{
+				// Then check for an override. If in place, use it instead.
+				// Overrides are the end of the line, regardless of the value of
+				// UseConfigOverride, an override file is the last that will be
+				// processed.
 				if (AppSettingsValues.UseConfigOverride)
 				{
 					LoadOptionalConfigurationOverride();
 				}
 				else
 				{
-					LoadOptionalSolutionConfiguration();
-					if (AppSettingsValues.UseConfigOverride)
+					// If a SolutionDir has been provided...
+					// (It might not, especially if just calling for a "help" function)
+					if (!String.IsNullOrEmpty(SolutionDir))
 					{
-						LoadOptionalConfigurationOverride();
+						// Then load the solution-level app.optional.config and apply it.
+						LoadOptionalSolutionConfiguration();
+						// Then check for an override. If in place, use it instead.
+						if (AppSettingsValues.UseConfigOverride)
+						{
+							LoadOptionalConfigurationOverride();
+						}
 					}
-					else
+					// If a ProjectDir has been provided...
+					if (!String.IsNullOrEmpty(ProjectDir))
 					{
+						// Then load the project-level app.optional.config and apply it.
 						if (AppSettingsValues.AllowOptionalAppConfig)
 						{
 							LoadOptionalProjectConfiguration();
+							// Then check for an override. If in place, use it instead.
 							if (AppSettingsValues.UseConfigOverride)
 							{
 								LoadOptionalConfigurationOverride();
