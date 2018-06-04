@@ -26,6 +26,7 @@ namespace NuGetHandler.ConfigurationHandler
 		DotNetFullFrameworkCommandSequence FullFrameworkCommands { get; set; }
 		DotNetStandard_2_0_CommandSequence Standard_2_0_Commands { get; set; }
 		DotNetCore_2_0_CommandSequence Core_2_0_Commands { get; set; }
+		DotNetCore_2_1_CommandSequence Core_2_1_Commands { get; set; }
 		List<NuGetRepository> Repositories { get; }
 		Dictionary<string, List<NuGetRepository>> Destinations { get; }
 		NuGetDestination SelectedDestination { get; }
@@ -47,6 +48,8 @@ namespace NuGetHandler.ConfigurationHandler
 			"DotNetStandard_2_0_CommandSequence";
 		private const string _DOT_NET_CORE_2_0_COMMAND_SEQUENCE =
 			"DotNetCore_2_0_CommandSequence";
+		private const string _DOT_NET_CORE_2_1_COMMAND_SEQUENCE =
+			"DotNetCore_2_1_CommandSequence";
 
 		private const string _CONFIG_FILE_NAME = "App.config";
 		private const string _OPTIONAL_CONFIG_FILE_NAME = "App.optional.config";
@@ -244,6 +247,9 @@ namespace NuGetHandler.ConfigurationHandler
 			Core_2_0_Commands =
 				_Configuration.Get<DotNetCore_2_0_CommandSequence>
 					(_DOT_NET_CORE_2_0_COMMAND_SEQUENCE);
+			Core_2_1_Commands =
+				_Configuration.Get<DotNetCore_2_1_CommandSequence>
+					(_DOT_NET_CORE_2_1_COMMAND_SEQUENCE);
 		}
 
 		private void LoadOptionalConfiguration(string aConfigPath)
@@ -519,6 +525,7 @@ namespace NuGetHandler.ConfigurationHandler
 		public DotNetFullFrameworkCommandSequence FullFrameworkCommands { get; set; }
 		public DotNetStandard_2_0_CommandSequence Standard_2_0_Commands { get; set; }
 		public DotNetCore_2_0_CommandSequence Core_2_0_Commands { get; set; }
+		public DotNetCore_2_1_CommandSequence Core_2_1_Commands { get; set; }
 
 		public List<NuGetRepository> Repositories { get; }
 			= new List<NuGetRepository>();

@@ -16,7 +16,7 @@
 			Add();
 		}
 
-		private static void OutputCommandSequenceDotNetCoreCommandValues()
+		private static void OutputCommandSequenceDotNetCore_2_0_CommandValues()
 		{
 			Add("Core 2.0 Cmomands");
 			foreach (KeyValuePair<string, string> vPair in HandleConfiguration.Core_2_0_Commands.Commands)
@@ -26,7 +26,17 @@
 			Add();
 		}
 
-		private static void OutputCommandSequenceDotNetStandardCommandValues()
+		private static void OutputCommandSequenceDotNetCore_2_1_CommandValues()
+		{
+			Add("Core 2.1 Cmomands");
+			foreach (KeyValuePair<string, string> vPair in HandleConfiguration.Core_2_1_Commands.Commands)
+			{
+				Add($"Key: {vPair.Key}, Value: {vPair.Value}");
+			}
+			Add();
+		}
+
+		private static void OutputCommandSequenceDotNetStandard_2_0_CommandValues()
 		{
 			Add("Standard 2.0 Cmomands");
 			foreach (KeyValuePair<string, string> vPair in HandleConfiguration.Standard_2_0_Commands.Commands)
@@ -84,7 +94,7 @@
 
 		public static void OutputCommandSequenceDotNetCore()
 		{
-			Add(@"DotNetCore_2_0_CommandSequence");
+			Add(@"DotNetCore CommandSequence");
 			Add();
 			Add(@"<!--All keys must be expressed as lower case values e.g. ""pack""-->");
 			Add(@"<add key=""pack"" value='""$ProjectPath$""--configuration $ConfigurationName$ --force--no - build--no - restore--output ""$OutputPackageTo$"" --serviceable --verbosity $VerbosityDotNet$'/>");
@@ -92,13 +102,14 @@
 			Add(@"<add key=""delete"" value='$PackageId$ $PackageVersion$ --source $Source$ --non-interactive --api-key $ApiKey$'/>");
 			if (CommandLineSettings.VerbosityLevel == VerbosityE.Detailed)
 			{
-				OutputCommandSequenceDotNetCoreCommandValues();
+				OutputCommandSequenceDotNetCore_2_0_CommandValues();
+				OutputCommandSequenceDotNetCore_2_1_CommandValues();
 			}
 		}
 
 		public static void OutputCommandSequenceDotNetStandard()
 		{
-			Add(@"DotNetStandard_2_0_CommandSequence");
+			Add(@"DotNetStandard CommandSequence");
 			Add();
 			Add(@"<!--All keys must be expressed as lower case values e.g. ""pack""-->");
 			Add(@"<add key=""pack"" value='""$ProjectPath$"" --configuration $ConfigurationName$ --force --no-build --no-restore --output ""$OutputPackageTo$"" --serviceable --verbosity $VerbosityDotNet$'/>");
@@ -106,7 +117,7 @@
 			Add(@"<add key=""delete"" value='$PackageId$ $PackageVersion$ --source $Source$ --non-interactive --api-key $ApiKey$'/>");
 			if (CommandLineSettings.VerbosityLevel == VerbosityE.Detailed)
 			{
-				OutputCommandSequenceDotNetStandardCommandValues();
+				OutputCommandSequenceDotNetStandard_2_0_CommandValues();
 			}
 		}
 

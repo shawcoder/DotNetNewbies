@@ -8,8 +8,9 @@
 	{
 		Unknown
 		, Full
-		, Standard
-		, Core
+		, Standard_2_0
+		, Core_2_0
+		, Core_2_1
 	}
 
 	public enum VerbosityE

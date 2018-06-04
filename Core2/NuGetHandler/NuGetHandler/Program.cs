@@ -47,7 +47,7 @@
 		{
 			aCollection.AddSingleton<IHandleConfiguration, HandleConfiguration>();
 			aCollection.AddSingleton<ILaunchPoint, LaunchPoint>();
-			aCollection.AddSingleton<ISpawnNugetProcesses, SpawnNugetProcesses>();
+			aCollection.AddSingleton<ISpawnNugetProcesses, SpawnNuGetProcesses>();
 			aConfigureDIService?.Invoke(aCollection);
 		}
 

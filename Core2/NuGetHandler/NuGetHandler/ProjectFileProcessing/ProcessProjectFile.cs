@@ -20,7 +20,9 @@
 			"GeneratePackageOnBuild";
 
 		private const string _NAMESPACE = "t";
-		private const string _NET_CORE = "netcore";
+		private const string _NET_CORE = "netcoreapp";
+		private const string _NET_CORE_2_0 = _NET_CORE + "2.0";
+		private const string _NET_CORE_2_1 = _NET_CORE + "2.1";
 		private const string _NET_STANDARD = "netstandard";
 
 		private const StringComparison _COMPARISON =
@@ -111,7 +113,7 @@
 			NodeParent = vNode.Node.Parent;
 			string vFramework = vNode.Value;
 			(DotNetFramework, string) vResult =
-				ProcessFramework(vFramework, _NET_STANDARD, DotNetFramework.Standard);
+				ProcessFramework(vFramework, _NET_STANDARD, DotNetFramework.Standard_2_0);
 			return vResult;
 		}
 
@@ -123,7 +125,12 @@
 			NodeParent = vNode.Node.Parent;
 			string vFramework = vNode.Value;
 			(DotNetFramework, string) vResult =
-				ProcessFramework(vFramework, _NET_CORE, DotNetFramework.Core);
+				ProcessFramework(vFramework, _NET_CORE_2_0, DotNetFramework.Core_2_0);
+			if (vResult.Item1 == DotNetFramework.Unknown)
+			{
+				vResult =
+					ProcessFramework(vFramework, _NET_CORE_2_1, DotNetFramework.Core_2_1);
+			}
 			return vResult;
 		}
 
