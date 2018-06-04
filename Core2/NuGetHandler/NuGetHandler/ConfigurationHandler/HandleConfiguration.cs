@@ -6,6 +6,7 @@ namespace NuGetHandler.ConfigurationHandler
 	using System.IO;
 	using System.Linq;
 	using System.Reflection;
+	using System.Text;
 	using AppConfigConfigurationBuilder;
 	using AppConfigHandling;
 	using HandlerCommandLine;
@@ -80,20 +81,12 @@ namespace NuGetHandler.ConfigurationHandler
 			}
 			if (VerbosityLevel == VerbosityE.Detailed)
 			{
-				WriteLine
-				(
-					"Raw command line arguments:"
-					+ $@" {aArgs[0].AsConditionallyQuoted()}"
-					+ $@" {aArgs[1].AsConditionallyQuoted()}"
-					+ $@" {aArgs[2].AsConditionallyQuoted()}"
-					+ $@" {aArgs[3].AsConditionallyQuoted()}"
-					+ $@" {aArgs[4].AsConditionallyQuoted()}"
-					+ $@" {aArgs[5].AsConditionallyQuoted()}"
-					+ $@" {aArgs[6].AsConditionallyQuoted()}"
-					+ $@" {aArgs[7].AsConditionallyQuoted()}"
-					+ $@" {aArgs[8].AsConditionallyQuoted()}"
-					+ $@" {aArgs[9].AsConditionallyQuoted()}"
-				);
+				StringBuilder vLine = new StringBuilder("Raw command line arguments:");
+				foreach (string vArg in aArgs)
+				{
+					vLine.Append($@" {vArg.AsConditionallyQuoted()}");
+				}
+				WriteLine(vLine.ToString());
 			}
 		}
 

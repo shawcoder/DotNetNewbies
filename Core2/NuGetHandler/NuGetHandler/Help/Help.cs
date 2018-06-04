@@ -101,6 +101,10 @@
 			Add($"{NUGET_PUSH_DESTINATIONS.PadItRight()}Just the information on the nuget server");
 			Add($"{String.Empty.PadItLeft()}repository destinations.");
 			Add();
+			Add($"{POSTBUILD.PadItRight()}Emit the necessary code that should be placed");
+			Add($"{String.Empty.PadItLeft()}in the Post-Build event section of the properties");
+			Add($"{String.Empty.PadItLeft()}of a given project.");
+			Add();
 			Add($"{SETUP.PadItRight()}How to prepare to install the NuGetHandler");
 			Add($"{String.Empty.PadItLeft()}program.");
 			Add();
@@ -374,6 +378,13 @@
 				{
 					HeaderWithInfo("NuGet Push Repositories");
 					OutputNuGetRepositories();
+					Footer();
+					break;
+				}
+				case POSTBUILD:
+				{
+					HeaderWithInfo("Post-Build event code");
+					OutputPostBuild();
 					Footer();
 					break;
 				}

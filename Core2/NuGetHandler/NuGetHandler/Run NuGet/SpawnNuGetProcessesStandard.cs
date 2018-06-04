@@ -19,8 +19,20 @@
 				return;
 			}
 			_Command = SetupNuGetCommand();
-			Dictionary<string, string> vCommands =
-				_HandleConfiguration.Standard_2_0_Commands.Commands;
+			Dictionary<string, string> vCommands;
+			switch (Framework)
+			{
+				case DotNetFramework.Standard_2_0:
+				{
+					vCommands = _HandleConfiguration.Standard_2_0_Commands.Commands;
+					break;
+				}
+				default:
+				{
+					throw new UnhandledSwitchCaseException
+						($"Invalid command set: {Framework}");
+				}
+			}
 			foreach (KeyValuePair<string, string> vTokenizedParamLine in vCommands)
 			{
 				switch (vTokenizedParamLine.Key.ToLower())

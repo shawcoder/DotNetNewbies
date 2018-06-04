@@ -4,6 +4,30 @@
 
 	public static class HelpSetup
 	{
+		public static void OutputPostBuild()
+		{
+			Add();
+			Add(" In order for a project to be NuGetHandler-ready, a command sequence");
+			Add(@" must be placed in the Post-Build event section of the ""Build Events""");
+			Add(" property page.");
+			Add();
+			Add(" The command sequence to make a project NuGet-eligible is:");
+			Add();
+			Add("@echo off");
+			Add("IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE");
+			//Add(@"IF EXIST ""$(SolutionDir)CopyToT4Support.bat"" CALL ""$(SolutionDir)CopyToT4Support"" ""$(TargetPath)"" ""$(SolutionDir)""");
+			Add(@"IF NOT EXIST ""%VSProjectsDir%NuGetHandler.bat"" GOTO DIRECT");
+			Add(@"CALL ""%VSProjectsDir%NuGetHandler.bat""  ""$(TargetPath)"" ""$(SolutionPath)"" ""$(ProjectPath)"" $(ConfigurationName)");
+			Add("GOTO END");
+			Add(":DIRECT");
+			Add(@"IF NOT EXIST ""%APPDATA%\NuGet\win10-x64\NuGetHandler.dll"" GOTO END");
+			Add(@"dotnet ""%APPDATA%\NuGet\win10-x64\NuGetHandler.dll"" -T ""$(TargetPath)"" -S ""$(SolutionPath)"" -P ""$(ProjectPath)"" -C $(ConfigurationName) -V quiet");
+			Add("GOTO END");
+			Add(":NOT_RELEASE");
+			Add("GOTO END");
+			Add(":END");
+		}
+
 		public static void OutputSetup()
 		{
 			Add("Setup:");
@@ -39,23 +63,9 @@
 			Add("  If allowed to execute, the Post-Build event of the NuGetHandler program, upon");
 			Add("  successful compilation in Release mode of the program, will copy the result");
 			Add("  to this location. One need not add the path to the Environment as the call to");
-			Add("  the NuGetHandler program itself is fully specified in the call sequence for ");
-			Add("  each project. The full specification for the command sequence for a ");
-			Add("  NuGet-eligible project follows:");
-			Add();
-			Add("@echo off");
-			Add("IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE");
-			//Add(@"IF EXIST ""$(SolutionDir)CopyToT4Support.bat"" CALL ""$(SolutionDir)CopyToT4Support"" ""$(TargetPath)"" ""$(SolutionDir)""");
-			Add(@"IF NOT EXIST ""%VSProjectsDir%NuGetHandler.bat"" GOTO DIRECT");
-			Add(@"CALL ""%VSProjectsDir%NuGetHandler.bat""  ""$(TargetPath)"" ""$(SolutionPath)"" ""$(ProjectPath)"" $(ConfigurationName)");
-			Add("GOTO END");
-			Add(":DIRECT");
-			Add(@"IF NOT EXIST ""%APPDATA%\NuGet\win10-x64\NuGetHandler.dll"" GOTO END");
-			Add(@"dotnet ""%APPDATA%\NuGet\win10-x64\NuGetHandler.dll"" -T ""$(TargetPath)"" -S ""$(SolutionPath)"" -P ""$(ProjectPath)"" -C $(ConfigurationName) -V quiet");
-			Add("GOTO END");
-			Add(":NOT_RELEASE");
-			Add("GOTO END");
-			Add(":END");
+			Add("  the NuGetHandler program itself is fully specified in the call sequence for");
+			Add("  each project.");
+			OutputPostBuild();
 			Add();
 			Add("Place the above script, verbatim, into the Post-Build event of each project to ");
 			Add("be made NuGetHandler eligible and the command will take care of the rest. And");

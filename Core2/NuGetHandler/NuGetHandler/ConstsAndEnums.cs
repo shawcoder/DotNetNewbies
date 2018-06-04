@@ -339,9 +339,11 @@
 		public const string APP_CONFIG_NUSPEC_NUGET = _APP_CONFIG + "-nuspec-nuget";
 		public const string COMMAND_LINE = "command-line";
 		public const string COMMAND_LINE_SWITCHES = COMMAND_LINE + "-switches";
-		public const string COMMAND_LINE_NAMED_VALUES = COMMAND_LINE + "-named-values";
+		public const string COMMAND_LINE_NAMED_VALUES =
+			COMMAND_LINE + "-named-values";
 		public const string COMMAND_SEQUENCE = "command-sequence";
-		public const string COMMAND_SEQUENCE_DOTNET_CORE = COMMAND_SEQUENCE + "-core";
+		public const string COMMAND_SEQUENCE_DOTNET_CORE =
+			COMMAND_SEQUENCE + "-core";
 		public const string COMMAND_SEQUENCE_NUGET = COMMAND_SEQUENCE + "-nuget";
 		public const string COMMAND_SEQUENCE_DOTNET_STANDARD =
 			COMMAND_SEQUENCE + "-standard";
@@ -352,6 +354,7 @@
 		public const string NUGET_PUSH_REPOS = NUGET_PUSH + "-repos";
 		public const string NUGET_PUSH_DESTINATIONS =
 			NUGET_PUSH + "-destinations";
+		public const string POSTBUILD = "post-build";
 		public const string SETUP = "setup";
 		public const string SUMMARY = "summary";
 		public const string TOKENS = "tokens";
@@ -366,8 +369,10 @@
 			vResult.AppendLine(APP_CONFIG_NUSPEC_DOTNET.PadItLeft(INSERT_NEW_LINE));
 			vResult.AppendLine(APP_CONFIG_NUSPEC_NUGET.PadItLeft(INSERT_NEW_LINE));
 			vResult.AppendLine(COMMAND_SEQUENCE.PadItLeft(INSERT_NEW_LINE));
-			vResult.AppendLine(COMMAND_SEQUENCE_DOTNET_CORE.PadItLeft(INSERT_NEW_LINE));
-			vResult.AppendLine(COMMAND_SEQUENCE_DOTNET_STANDARD.PadItLeft(INSERT_NEW_LINE));
+			vResult.AppendLine
+				(COMMAND_SEQUENCE_DOTNET_CORE.PadItLeft(INSERT_NEW_LINE));
+			vResult.AppendLine
+				(COMMAND_SEQUENCE_DOTNET_STANDARD.PadItLeft(INSERT_NEW_LINE));
 			vResult.AppendLine(COMMAND_SEQUENCE_NUGET.PadItLeft(INSERT_NEW_LINE));
 			vResult.AppendLine(COMMAND_LINE.PadItLeft(INSERT_NEW_LINE));
 			vResult.AppendLine(CONFIG_INFO.PadItLeft(INSERT_NEW_LINE));
@@ -376,6 +381,7 @@
 			vResult.AppendLine(NUGET_PUSH.PadItLeft(INSERT_NEW_LINE));
 			vResult.AppendLine(NUGET_PUSH_REPOS.PadItLeft(INSERT_NEW_LINE));
 			vResult.AppendLine(NUGET_PUSH_DESTINATIONS.PadItLeft(INSERT_NEW_LINE));
+			vResult.AppendLine(POSTBUILD.PadItLeft(INSERT_NEW_LINE));
 			vResult.AppendLine(SETUP.PadItLeft(INSERT_NEW_LINE));
 			vResult.AppendLine(COMMAND_LINE_SWITCHES.PadItLeft(INSERT_NEW_LINE));
 			vResult.AppendLine(SUMMARY.PadItLeft(INSERT_NEW_LINE));
