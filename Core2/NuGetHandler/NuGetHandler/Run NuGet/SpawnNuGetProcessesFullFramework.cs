@@ -8,6 +8,7 @@
 	using Infrastructure;
 	using static AppConfigHandling.CommandLineSettings;
 	using static ApplyTokenValuesToCommandLine;
+	using static NuGetNuSpecKeys;
 	using static TokenSetContainer;
 
 	// Full Framework- specific code
@@ -147,18 +148,18 @@
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceAuthors)
 			{
 				vLookFor =
-					NuGetNuSpecKeys.AUTHOR_KEY + NuGetNuSpecKeys.AUTHORS.AsToken();
+					AUTHOR_KEY + AUTHORS.AsToken();
 				vContent.Replace
 				(
 					vLookFor
-					, NuGetNuSpecKeys.AUTHOR_KEY
+					, AUTHOR_KEY
 							+ _HandleConfiguration.NuGetNuSpecSettings.Authors
 				);
 				vChangeCount++;
 			}
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceCopyright)
 			{
-				vLookFor = $"{NuGetNuSpecKeys.COPYRIGHT} {DateTime.Now.Year}";
+				vLookFor = $"{COPYRIGHT} {DateTime.Now.Year}";
 				vContent.Replace
 				(
 					vLookFor.AsToken()
@@ -166,7 +167,7 @@
 				);
 				vChangeCount++;
 			}
-			vLookFor = NuGetNuSpecKeys.DESCRIPTION.AsToken();
+			vLookFor = DESCRIPTION.AsToken();
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceDescription)
 			{
 				vContent.Replace
@@ -179,21 +180,21 @@
 			else
 			{
 				string vFind =
-					NuGetNuSpecKeys.DESCRIPTION_KEY_START
-					+ NuGetNuSpecKeys.DEFAULT_DESCRIPTION
-					+ NuGetNuSpecKeys.DESCRIPTION_KEY_END
+					DESCRIPTION_KEY_START
+					+ DEFAULT_DESCRIPTION
+					+ DESCRIPTION_KEY_END
 					+ "\r\n";
 				string vReplaceWith =
-					NuGetNuSpecKeys.DESCRIPTION_KEY_START
-					+ NuGetNuSpecKeys.DEFAULT_DESCRIPTION
+					DESCRIPTION_KEY_START
+					+ DEFAULT_DESCRIPTION
 					+ DateTime.Now.ToLongDateString()
-					+ NuGetNuSpecKeys.DESCRIPTION_KEY_END
+					+ DESCRIPTION_KEY_END
 					+ "\r\n";
 				vContent.Replace(vFind, vReplaceWith);
 				vChangeCount++;
 			}
 			vLookFor =
-				NuGetNuSpecKeys.ICON_URL_KEY + NuGetNuSpecKeys.ICON_URL_OR_DELETE_THIS;
+				ICON_URL_KEY + ICON_URL_OR_DELETE_THIS;
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceIconUrl)
 			{
 				vContent.Replace
@@ -203,14 +204,14 @@
 			else
 			{
 				string vFind =
-					NuGetNuSpecKeys.ICON_URL_KEY
-						+ NuGetNuSpecKeys.ICON_URL_OR_DELETE_THIS
-						+ NuGetNuSpecKeys.ICON_URL_KEY_END
+					ICON_URL_KEY
+						+ ICON_URL_OR_DELETE_THIS
+						+ ICON_URL_KEY_END
 					+ "\r\n";
 				vContent.Replace(vFind, String.Empty);
 				vChangeCount++;
 			}
-			vLookFor = NuGetNuSpecKeys.LICENSE_URL;
+			vLookFor = LICENSE_URL;
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceLicenseUrl)
 			{
 				vContent.Replace
@@ -223,14 +224,14 @@
 			else
 			{
 				string vFind =
-					NuGetNuSpecKeys.LICENSE_URL_KEY
-					+ NuGetNuSpecKeys.LICENSE_URL_OR_DELETE_THIS
-					+ NuGetNuSpecKeys.LICENSE_URL_KEY_END
+					LICENSE_URL_KEY
+					+ LICENSE_URL_OR_DELETE_THIS
+					+ LICENSE_URL_KEY_END
 					+ "\r\n";
 				vContent.Replace(vFind, String.Empty);
 				vChangeCount++;
 			}
-			vLookFor = NuGetNuSpecKeys.PROJECT_URL;
+			vLookFor = PROJECT_URL;
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceProjectUrl)
 			{
 				vContent.Replace
@@ -243,9 +244,9 @@
 			else
 			{
 				string vFind =
-					NuGetNuSpecKeys.PROJECT_URL_KEY
-					+ NuGetNuSpecKeys.PROJECT_URL_OR_DELETE_THIS
-					+ NuGetNuSpecKeys.PROJECT_URL_KEY_END
+					PROJECT_URL_KEY
+					+ PROJECT_URL_OR_DELETE_THIS
+					+ PROJECT_URL_KEY_END
 					+ "\r\n";
 				vContent.Replace(vFind, String.Empty);
 				vChangeCount++;
@@ -253,16 +254,16 @@
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceOwners)
 			{
 				vLookFor =
-					NuGetNuSpecKeys.OWNER_KEY + NuGetNuSpecKeys.AUTHORS.AsToken();
+					OWNER_KEY + AUTHORS.AsToken();
 				vContent.Replace
 				(
 					vLookFor
-					, NuGetNuSpecKeys.OWNER_KEY
+					, OWNER_KEY
 							+ _HandleConfiguration.NuGetNuSpecSettings.Owners
 				);
 				vChangeCount++;
 			}
-			vLookFor = NuGetNuSpecKeys.DEFAULT_RELEASE_NOTES;
+			vLookFor = DEFAULT_RELEASE_NOTES;
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceReleaseNotes)
 			{
 				if (_HandleConfiguration.AppSettingsValues.RequireReleaseNotesFile)
@@ -274,9 +275,9 @@
 			else
 			{
 				string vFind =
-					NuGetNuSpecKeys.RELEASE_NOTES_KEY
-					+ NuGetNuSpecKeys.DEFAULT_RELEASE_NOTES
-					+ NuGetNuSpecKeys.RELEASE_NOTES_KEY_END
+					RELEASE_NOTES_KEY
+					+ DEFAULT_RELEASE_NOTES
+					+ RELEASE_NOTES_KEY_END
 					+ "\r\n";
 				vContent.Replace(vFind, String.Empty);
 				vChangeCount++;
@@ -284,8 +285,8 @@
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceRequireLicenseAcceptance)
 			{
 				vLookFor =
-					NuGetNuSpecKeys.REQUIRE_LICENSE_ACCEPTANCE_KEY
-						+ NuGetNuSpecKeys.DEFAULT_REQUIRE_LICENSE_ACCEPTANCE;
+					REQUIRE_LICENSE_ACCEPTANCE_KEY
+						+ DEFAULT_REQUIRE_LICENSE_ACCEPTANCE;
 				vContent.Replace
 				(
 					vLookFor,
@@ -295,17 +296,17 @@
 			}
 			if (_HandleConfiguration.AppSettingsValues.RequireSummaryFile)
 			{
-				vLookFor = NuGetNuSpecKeys.SUMMARY_KEY;
+				vLookFor = SUMMARY_KEY;
 				string vContentAsString = vContent.ToString();
 				int vIndex = vContentAsString.IndexOf(vLookFor, COMPARISON);
 				if (vIndex < 0)
 				{
 					vIndex = vContentAsString.IndexOf
-						(NuGetNuSpecKeys.METADATA_END, COMPARISON);
+						(METADATA_END, COMPARISON);
 					string vNewKey =
-						NuGetNuSpecKeys.SUMMARY_KEY
+						SUMMARY_KEY
 							+ ExtractNuGetSummary()
-							+ NuGetNuSpecKeys.SUMMARY_KEY_END;
+							+ SUMMARY_KEY_END;
 					vContent.Insert(vIndex, vNewKey);
 					vChangeCount++;
 				}
@@ -315,8 +316,8 @@
 					// changes how nuget.exe functions...
 					int vEndIndex =
 						vContentAsString.IndexOf
-							(NuGetNuSpecKeys.SUMMARY_KEY_END, COMPARISON);
-					vIndex = vIndex + NuGetNuSpecKeys.SUMMARY_KEY.Length;
+							(SUMMARY_KEY_END, COMPARISON);
+					vIndex = vIndex + SUMMARY_KEY.Length;
 					int vHowMuch = vEndIndex - vIndex + 1;
 					vContentAsString = vContentAsString.Remove(vIndex, vHowMuch);
 					vContentAsString = vContentAsString.Insert(vIndex, ExtractNuGetSummary());
@@ -325,7 +326,7 @@
 					vChangeCount++;
 				}
 			}
-			vLookFor = NuGetNuSpecKeys.DEFAULT_TAGS;
+			vLookFor = DEFAULT_TAGS;
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceTags)
 			{
 				vContent.Replace(vLookFor, _HandleConfiguration.NuGetNuSpecSettings.Tags);
@@ -334,16 +335,16 @@
 			else
 			{
 				string vFind =
-					NuGetNuSpecKeys.TAGS_KEY_START
-					+ NuGetNuSpecKeys.DEFAULT_TAGS
-					+ NuGetNuSpecKeys.TAGS_KEY_END
+					TAGS_KEY_START
+					+ DEFAULT_TAGS
+					+ TAGS_KEY_END
 					+ "\r\n";
 				vContent.Replace(vFind, String.Empty);
 				vChangeCount++;
 			}
 			if (_HandleConfiguration.NuGetNuSpecSettings.ForceTitle)
 			{
-				vLookFor = NuGetNuSpecKeys.TITLE.AsToken();
+				vLookFor = TITLE.AsToken();
 				vContent.Replace
 					(vLookFor, _HandleConfiguration.NuGetNuSpecSettings.Title);
 				vChangeCount++;

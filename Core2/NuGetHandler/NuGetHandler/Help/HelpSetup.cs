@@ -21,7 +21,7 @@
 			Add("GOTO END");
 			Add(":DIRECT");
 			Add(@"IF NOT EXIST ""%APPDATA%\NuGet\win10-x64\NuGetHandler.dll"" GOTO END");
-			Add(@"dotnet ""%APPDATA%\NuGet\win10-x64\NuGetHandler.dll"" -T ""$(TargetPath)"" -S ""$(SolutionPath)"" -P ""$(ProjectPath)"" -C $(ConfigurationName) -V quiet");
+			Add(@"dotnet ""%APPDATA%\NuGet\win10-x64\NuGetHandler.dll"" -T ""$(TargetPath)"" -S ""$(SolutionPath)"" -P ""$(ProjectPath)"" -C $(ConfigurationName)");
 			Add("GOTO END");
 			Add(":NOT_RELEASE");
 			Add("GOTO END");

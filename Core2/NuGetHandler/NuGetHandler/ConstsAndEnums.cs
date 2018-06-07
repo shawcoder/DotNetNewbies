@@ -1,13 +1,16 @@
 ﻿namespace NuGetHandler
 {
+	using System;
 	using System.Text;
 	using Infrastructure;
 	using Microsoft.Extensions.DependencyInjection;
+	using static Consts;
 
 	public enum DotNetFramework
 	{
 		Unknown
 		, Full
+		, UniversalWindows
 		, Standard_2_0
 		, Core_2_0
 		, Core_2_1
@@ -46,6 +49,19 @@
 
 	public static class Consts
 	{
+		public const StringComparison COMPARISON =
+			StringComparison.InvariantCultureIgnoreCase;
+
+		public const string KEY_START = "<";
+		public const string KEY_END_START = KEY_START + "/";
+		public const string KEY_END = ">";
+
+		public const string LEFT_PAREN = "(";
+		public const string RIGHT_PAREN = ")";
+
+		public const string LEFT_BRACKET = "[";
+		public const string RIGHT_BRACKET = "]";
+
 		public const string RELEASE_NOTES_FILE_NAME = "ReleaseNotes";
 		public const string SUMMARY_FILE_NAME = "Summary";
 		public const string DOT = ".";
@@ -58,6 +74,8 @@
 		public const string NUSPEC_EXT = DOT + "nuspec";
 		public const string SEMICOLON = ";";
 		public const string HTTP = "http";
+
+		public const string DEFAULT_VERSION = "1.0.0.1";
 	}
 
 	public static class CommandLineSwitches
@@ -248,10 +266,6 @@
 
 	public static class NuGetNuSpecKeys
 	{
-		private const string _KEY_START = "<";
-		private const string _KEY_END_START = _KEY_START + "/";
-		private const string _KEY_END = ">";
-
 		public const string METADATA = "metadata";
 		public const string ID = "id";
 		public const string VERSION = "version";
@@ -269,19 +283,19 @@
 		public const string TAGS = "tags";
 
 		public const string DESCRIPTION_KEY_START =
-			_KEY_START + DESCRIPTION + _KEY_END;
+			KEY_START + DESCRIPTION + KEY_END;
 		public const string DESCRIPTION_KEY_END =
-			_KEY_END_START + DESCRIPTION + _KEY_END;
+			KEY_END_START + DESCRIPTION + KEY_END;
 		public const string DEFAULT_DESCRIPTION = "Package description";
-		public const string METADATA_END = _KEY_END_START + METADATA + _KEY_END;
-		public const string ICON_URL_KEY = _KEY_START + ICON_URL + _KEY_END;
-		public const string LICENSE_URL_KEY = _KEY_START + LICENSE_URL + _KEY_END;
-		public const string PROJECT_URL_KEY = _KEY_START + PROJECT_URL + _KEY_END;
-		public const string ICON_URL_KEY_END = _KEY_END_START + ICON_URL + _KEY_END;
+		public const string METADATA_END = KEY_END_START + METADATA + KEY_END;
+		public const string ICON_URL_KEY = KEY_START + ICON_URL + KEY_END;
+		public const string LICENSE_URL_KEY = KEY_START + LICENSE_URL + KEY_END;
+		public const string PROJECT_URL_KEY = KEY_START + PROJECT_URL + KEY_END;
+		public const string ICON_URL_KEY_END = KEY_END_START + ICON_URL + KEY_END;
 		public const string LICENSE_URL_KEY_END =
-			_KEY_END_START + LICENSE_URL + _KEY_END;
+			KEY_END_START + LICENSE_URL + KEY_END;
 		public const string PROJECT_URL_KEY_END =
-			_KEY_END_START + PROJECT_URL + _KEY_END;
+			KEY_END_START + PROJECT_URL + KEY_END;
 		public const string ICON_URL_OR_DELETE_THIS =
 			"http://ICON_URL_HERE_OR_DELETE_THIS_LINE";
 		public const string LICENSE_URL_OR_DELETE_THIS =
@@ -289,23 +303,23 @@
 		public const string PROJECT_URL_OR_DELETE_THIS =
 			"http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE";
 		public const string RELEASE_NOTES_KEY =
-			_KEY_START + RELEASE_NOTES + _KEY_END;
+			KEY_START + RELEASE_NOTES + KEY_END;
 		public const string RELEASE_NOTES_KEY_END =
-			_KEY_END_START + RELEASE_NOTES + _KEY_END;
+			KEY_END_START + RELEASE_NOTES + KEY_END;
 		public const string DEFAULT_RELEASE_NOTES =
 			"Summary of changes made in this release of the package.";
-		public const string TAGS_KEY_START = _KEY_START + TAGS + _KEY_END;
-		public const string TAGS_KEY_END = _KEY_END_START + TAGS + _KEY_END;
+		public const string TAGS_KEY_START = KEY_START + TAGS + KEY_END;
+		public const string TAGS_KEY_END = KEY_END_START + TAGS + KEY_END;
 
 		public const string DEFAULT_COPYRIGHT = COPYRIGHT + " "; // Insert the year
 		public const string DEFAULT_TAGS = "Tag1 Tag2";
-		public const string AUTHOR_KEY = _KEY_START + AUTHORS + _KEY_END;
-		public const string OWNER_KEY = _KEY_START + OWNERS + _KEY_END;
+		public const string AUTHOR_KEY = KEY_START + AUTHORS + KEY_END;
+		public const string OWNER_KEY = KEY_START + OWNERS + KEY_END;
 		public const string DEFAULT_REQUIRE_LICENSE_ACCEPTANCE = "False";
 		public const string REQUIRE_LICENSE_ACCEPTANCE_KEY =
-			_KEY_START + REQUIRE_LICENSE_ACCEPTANCE + _KEY_END;
-		public const string SUMMARY_KEY = _KEY_START + SUMMARY + _KEY_END;
-		public const string SUMMARY_KEY_END = _KEY_END_START + SUMMARY + _KEY_END;
+			KEY_START + REQUIRE_LICENSE_ACCEPTANCE + KEY_END;
+		public const string SUMMARY_KEY = KEY_START + SUMMARY + KEY_END;
+		public const string SUMMARY_KEY_END = KEY_END_START + SUMMARY + KEY_END;
 
 	}
 

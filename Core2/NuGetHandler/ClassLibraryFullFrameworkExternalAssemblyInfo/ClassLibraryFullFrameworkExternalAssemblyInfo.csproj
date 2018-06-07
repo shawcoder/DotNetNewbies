@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9634CD59-766A-440A-91C1-9C522EA00ADA}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>NuGetSimulatorFF</RootNamespace>
-    <AssemblyName>NuGetSimulatorFF</AssemblyName>
+    <ProjectGuid>{7F418A58-1330-4829-B36D-1DD0D4C0748A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ClassLibraryFullFrameworkExternalAssemblyInfo</RootNamespace>
+    <AssemblyName>ClassLibraryFullFrameworkExternalAssemblyInfo</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -43,23 +40,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="..\..\AWE.Lib.SolutionAssemblyInfo.cs">
+      <Link>Properties\AWE.Lib.SolutionAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="ReleaseNotes.txt" />
+    <None Include="Summary.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>@echo off
 IF NOT $(ConfigurationName) == Release GOTO NOT_RELEASE
-IF EXIST "$(SolutionDir)CopyToT4Support.bat" CALL "$(SolutionDir)CopyToT4Support" "$(TargetPath)" "$(SolutionDir)"
+REM IF EXIST "$(SolutionDir)CopyToT4Support.bat" CALL "$(SolutionDir)CopyToT4Support" "$(TargetPath)" "$(SolutionDir)"
 IF NOT EXIST "%25VSProjectsDir%25NuGetHandler.bat" GOTO DIRECT
 CALL "%25VSProjectsDir%25NuGetHandler.bat"  "$(TargetPath)" "$(SolutionPath)" "$(ProjectPath)" $(ConfigurationName)
 GOTO END
 :DIRECT
 IF NOT EXIST "%25APPDATA%25\NuGet\win10-x64\NuGetHandler.dll" GOTO END
-dotnet "%25APPDATA%25\NuGet\win10-x64\NuGetHandler.dll" -T "$(TargetPath)" -S "$(SolutionPath)" -P "$(ProjectPath)" -C $(ConfigurationName)
+dotnet "%25APPDATA%25\NuGet\win10-x64\NuGetHandler.dll" -t "$(TargetPath)" -s "$(SolutionPath)" -p "$(ProjectPath)" -c $(ConfigurationName)
 GOTO END
 :NOT_RELEASE
 GOTO END

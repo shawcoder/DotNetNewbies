@@ -1,6 +1,7 @@
 ﻿namespace NuGetHandler.AppConfigHandling
 {
 	using System;
+	using Infrastructure;
 	using static CommandLineSettings;
 
 	public static class CommandLineSettings
@@ -64,6 +65,14 @@
 
 	}
 
+	/// <summary>
+	/// Why this bit of silliness? Because the dotnet core configuration gadget
+	/// needs a regular class to assign things to as it extracts them from the
+	/// source. A static class won't do. However, because there is only one
+	/// version of the command line, a static is declared and used throughout
+	/// the program. Easier than maintaining some instance variable and passing
+	/// it around all the time.
+	/// </summary>
 	public class CommandLineValues
 	{
 		public string TargetPath { get; set; }
@@ -151,6 +160,9 @@
 				ProjectExt = aCommandLineValues.ProjectExt;
 				ProjectFileName = aCommandLineValues.ProjectFileName;
 				ProjectName = aCommandLineValues.ProjectName;
+				// XmlFileTweaker assignment
+#warning Don't forget to fiddle this value when dealing with Full Framework and UAP projects. One needs the value of the AssemblyInfo file to fiddle with.
+				ProjectPath.SetTextFilePath();
 			}
 			if (!String.IsNullOrWhiteSpace(aCommandLineValues.ConfigurationName))
 			{
@@ -176,7 +188,7 @@
 			}
 			MergeDeletions = aCommandLineValues.MergeDeletes;
 			PerformDeletes = aCommandLineValues.PerformDeletes;
-			Wait = aCommandLineValues.Wait;
+			CommandLineSettings.Wait = aCommandLineValues.Wait;
 			CommandLineSettings.Help = aCommandLineValues.Help;
 			//HelpSection = aCommandLineValues.HelpSection;
 			NoOp = aCommandLineValues.NoOp;
@@ -215,7 +227,7 @@
 			MergeDeletions = false;
 			OverrideVersion = String.Empty;
 			PerformDeletes = false;
-			Wait = true;
+			CommandLineSettings.Wait = true;
 			CommandLineSettings.Help = HelpSections.ALL;
 			//HelpSection = aCommandLineValues.HelpSection;
 			NoOp = true;

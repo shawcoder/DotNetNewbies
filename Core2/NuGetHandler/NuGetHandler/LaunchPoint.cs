@@ -69,7 +69,16 @@ namespace NuGetHandler
 			NuSpecFilePath = Path.ChangeExtension(ProjectPath, NUSPEC_EXT);
 		}
 
-		private void SetFrameworkInfo()
+		private void WriteVersionBackToProject(string aVersion)
+		{
+			if (FrameworkInformation.Framework == DotNetFramework.Full)
+			{
+				return; // It's too hard to fix the full framework version of version.
+			}
+			WritePackageVersion(aVersion);
+		}
+
+		private void SetVersion()
 		{
 			if (CommandLineSettings.SelectedVersion != InternalVersionSelectorE.Unknown)
 			{
@@ -104,19 +113,54 @@ namespace NuGetHandler
 						? _HandleConfiguration.AppSettingsValues.VersionOverride
 						: FrameworkInformation.PackageVersion;
 			}
+			if (String.IsNullOrWhiteSpace(PackageVersion))
+			{
+				PackageVersion = DEFAULT_VERSION;
+			}
+			string[] vPieces =
+				PackageVersion.Split(DOT, StringSplitOptions.RemoveEmptyEntries);
+			if (vPieces.Length != 4)
+			{
+				PackageVersion = DEFAULT_VERSION;
+				vPieces =
+					PackageVersion.Split(DOT, StringSplitOptions.RemoveEmptyEntries);
+			}
+			if (_HandleConfiguration.AppSettingsValues.UseDateBasedVersion)
+			{
+				DateTime vNow = DateTime.Now;
+				vPieces[1] = vNow.Year.ToString();
+				vPieces[2] = vNow.Date.ToString("Mdd");
+				PackageVersion = $"{vPieces[0]}.{vPieces[1]}.{vPieces[2]}.{vPieces[3]}";
+			}
+			if (_HandleConfiguration.AppSettingsValues.AutoIncrementBuildNumber)
+			{
+				vPieces =
+					PackageVersion.Split(DOT, StringSplitOptions.RemoveEmptyEntries);
+				if (short.TryParse(vPieces[3], out short vBuildNumber))
+				{
+					vBuildNumber++;
+					vPieces[3] = vBuildNumber.ToString();
+					PackageVersion =
+						$"{vPieces[0]}.{vPieces[1]}.{vPieces[2]}.{vPieces[3]}";
+					WriteVersionBackToProject(PackageVersion);
+				}
+			}
+		}
 
+		private void SetFrameworkInfo()
+		{
+			SetVersion();
 			PackageFileName =
 				CommandLineSettings.TargetName
 					+ DOT
 					+ PackageVersion
-					//				Path.ChangeExtension(CommandLineSettings.TargetName, PackageVersion)
 					+ PACKAGE_EXT;
 
 			PackageDir =
 				Environment.ExpandEnvironmentVariables
 					(_HandleConfiguration.AppSettingsValues.PackageHomeDir).AsDir()
-				+ CommandLineSettings.SolutionName?.AsDir() ?? "".AsDir()
-				+ CommandLineSettings.TargetName?.AsDir() ?? "".AsDir()
+				+ (CommandLineSettings.SolutionName?.AsDir() ?? "".AsDir())
+				+ (CommandLineSettings.TargetName?.AsDir() ?? "".AsDir())
 				+ PackageVersion.AsDir();
 			PackagePath = PackageDir + PackageFileName;
 
@@ -139,7 +183,7 @@ namespace NuGetHandler
 			SetFrameworkInfo();
 			vTest =
 				CommandLineSettings.NoOp
-				|| (_HandleConfiguration.AppSettingsValues?.SuspendHandling ?? true);
+					|| (_HandleConfiguration.AppSettingsValues?.SuspendHandling ?? true);
 			if (!vTest)
 			{
 				_SpawnNugetProcesses.Spawn(_HandleConfiguration);

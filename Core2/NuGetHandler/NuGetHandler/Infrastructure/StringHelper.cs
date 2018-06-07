@@ -2,10 +2,32 @@
 {
 	using System;
 	using System.IO;
+	using static Consts;
 
 	public static class StringHelper
 	{
 		private const int _PAD_INTO = 30;
+
+		public static int IndexOf
+		(
+			this string aString
+			, string aLookFor
+			, int aStartIndex
+			, StringComparison aStringComparison
+		)
+		{
+			bool vTest =
+				String.IsNullOrEmpty(aString)
+					|| String.IsNullOrEmpty(aLookFor)
+					|| (aStartIndex >= aString.Length);
+			if (vTest)
+			{
+				return -1;
+			}
+			string vSearchString = aString.Substring(aStartIndex);
+			int vResult = vSearchString.IndexOf(aLookFor, COMPARISON);
+			return vResult;
+		}
 
 		public static string AsConditionallyQuoted(this string aString)
 		{
