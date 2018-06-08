@@ -52,7 +52,7 @@ namespace NuGetHandler.ConfigurationHandler
 		private const string _DOT_NET_CORE_2_1_COMMAND_SEQUENCE =
 			"DotNetCore_2_1_CommandSequence";
 
-		private const string _CONFIG_FILE_NAME = "App.config";
+		private const string _CONFIG_FILE_NAME = "NuGetHandler.dll.config";
 		private const string _OPTIONAL_CONFIG_FILE_NAME = "App.optional.config";
 
 		private IConfiguration _Configuration;
